@@ -1,0 +1,22 @@
+---
+# defaults file for k8s_certs
+cfssl_version: 1.4.1
+cfssljson_version: 1.4.1
+kubectl_version: 1.20.0
+
+# Cert data
+CN: Kubernetes
+C: RU
+L: Ekaterinburg
+O: Kubernetes
+OU: CA
+ST: Ekaterinburg
+algo: rsa
+size: 2048
+expiry: 8760h
+
+# temp data dir
+tmp_data_dir:  /tmp/kubernetes-files
+
+# Cert hostnames of API
+kubernetes_hostnames: kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local

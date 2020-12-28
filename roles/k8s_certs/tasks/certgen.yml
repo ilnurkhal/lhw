@@ -1,0 +1,134 @@
+---
+- name: Create a temp directory if it does not exist
+  local_action:
+    module: file
+    path: "{{ tmp_data_dir }}"
+    state: directory
+    mode: '0755'
+
+- name: render ca-csr.json
+  local_action:
+    module: template
+    src: ca-csr.j2
+    dest: "{{ tmp_data_dir }}/ca-csr.json"
+  
+- name: render ca-config.json
+  local_action:
+    module: template
+    src: ca-config.j2
+    dest: "{{ tmp_data_dir }}/ca-config.json"
+
+- name: render admin-csr.json
+  local_action:
+    module: template
+    src: admin-csr.j2
+    dest: "{{ tmp_data_dir }}/admin-csr.json"
+
+- name: render kube-controller-manager-csr.json
+  local_action:
+    module: template
+    src: kube-controller-manager-csr.j2
+    dest: "{{ tmp_data_dir }}/kube-controller-manager-csr.json"
+
+- name: render kube-proxy-csr.json
+  local_action:
+    module: template
+    src: kube-proxy-csr.j2
+    dest: "{{ tmp_data_dir }}/kube-proxy-csr.json"
+
+- name: render kube-scheduler-csr.json
+  local_action:
+    module: template
+    src: kube-scheduler-csr.j2
+    dest: "{{ tmp_data_dir }}/kube-scheduler-csr.json"
+
+- name: render kubernetes-csr.json
+  local_action:
+    module: template
+    src: kubernetes-csr.j2
+    dest: "{{ tmp_data_dir }}/kubernetes-csr.json"
+    
+- name: render The Kubelet Client csr
+  local_action:
+    module: template
+    src: instance-csr.j2
+    dest: "{{ tmp_data_dir }}/{{ item }}-csr.json"
+  with_items: "{{ groups['k8s_worker'] }}"
+
+- name: render service-account-csr.json
+  local_action:
+    module: template
+    src: service-account-csr.j2
+    dest: "{{ tmp_data_dir }}/service-account-csr.json"
+
+- name: Generate CA cert
+  delegate_to: 127.0.0.1
+  shell: > 
+    cfssl gencert -initca {{ tmp_data_dir }}/ca-csr.json | 
+    cfssljson -bare {{ tmp_data_dir }}/ca
+
+- name: Generate The Admin Client Certificate
+  delegate_to: 127.0.0.1
+  shell: > 
+    cfssl gencert -ca={{ tmp_data_dir }}/ca.pem 
+    -ca-key={{ tmp_data_dir }}/ca-key.pem 
+    -config={{ tmp_data_dir }}/ca-config.json 
+    -profile=kubernetes  {{ tmp_data_dir }}/admin-csr.json | 
+    cfssljson -bare {{ tmp_data_dir }}/admin
+
+- name: Generate The Kubelet Client Certificates
+  delegate_to: 127.0.0.1
+  with_items: "{{ groups['k8s_worker'] }}"
+  shell: >
+    cfssl gencert -ca={{ tmp_data_dir }}/ca.pem 
+    -ca-key={{ tmp_data_dir }}/ca-key.pem 
+    -config={{ tmp_data_dir }}/ca-config.json 
+    -profile=kubernetes 
+    -hostname={{ item }} {{ tmp_data_dir }}/{{ item }}-csr.json | 
+    cfssljson -bare {{ tmp_data_dir }}/{{ item }}
+
+- name: Generate The Controller Manager Client Certificate
+  delegate_to: 127.0.0.1
+  shell: >
+    cfssl gencert -ca={{ tmp_data_dir }}/ca.pem 
+    -ca-key={{ tmp_data_dir }}/ca-key.pem 
+    -config={{ tmp_data_dir }}/ca-config.json 
+    -profile=kubernetes {{ tmp_data_dir }}/kube-controller-manager-csr.json | 
+    cfssljson -bare {{ tmp_data_dir }}/kube-controller-manager
+
+- name: Generate The Kube Proxy Client Certificate
+  delegate_to: 127.0.0.1
+  shell: >
+    cfssl gencert -ca={{ tmp_data_dir }}/ca.pem 
+    -ca-key={{ tmp_data_dir }}/ca-key.pem 
+    -config={{ tmp_data_dir }}/ca-config.json 
+    -profile=kubernetes {{ tmp_data_dir }}/kube-proxy-csr.json | 
+    cfssljson -bare {{ tmp_data_dir }}/kube-proxy
+
+- name: Generate The Scheduler Client Certificate
+  delegate_to: 127.0.0.1
+  shell: > 
+    cfssl gencert -ca={{ tmp_data_dir }}/ca.pem 
+    -ca-key={{ tmp_data_dir }}/ca-key.pem 
+    -config={{ tmp_data_dir }}/ca-config.json 
+    -profile=kubernetes {{ tmp_data_dir }}/kube-scheduler-csr.json | 
+    cfssljson -bare {{ tmp_data_dir }}/kube-scheduler
+
+- name: Generate The Kubernetes API Server Certificate
+  delegate_to: 127.0.0.1
+  shell: > 
+    cfssl gencert -ca={{ tmp_data_dir }}/ca.pem 
+    -ca-key={{ tmp_data_dir }}/ca-key.pem 
+    -config={{ tmp_data_dir }}/ca-config.json
+    -hostname={{kubernetes_hostnames}},127.0.0.1,10.32.0.1,{{ groups['k8s_control_plane'] | list | join(',') }} 
+    -profile=kubernetes {{ tmp_data_dir }}/kubernetes-csr.json | 
+    cfssljson -bare {{ tmp_data_dir }}/kubernetes
+
+- name: Generate The Kubernetes API Server Certificate
+  delegate_to: 127.0.0.1
+  shell: > 
+    cfssl gencert -ca={{ tmp_data_dir }}/ca.pem 
+    -ca-key={{ tmp_data_dir }}/ca-key.pem 
+    -config={{ tmp_data_dir }}/ca-config.json 
+    -profile=kubernetes {{ tmp_data_dir }}/service-account-csr.json | 
+    cfssljson -bare {{ tmp_data_dir }}/service-account

@@ -1,0 +1,19 @@
+all:
+  children:
+    etcd:
+      hosts:
+        k8sm-1:
+        k8sm-2:
+        k8sm-3:
+    k8s_control_plane:
+      hosts:
+        k8sm-1:
+        k8sm-2:
+        k8sm-3:
+    k8s_worker:
+      hosts:
+        k8sw-1:
+        k8sw-2:
+    k8s_balancer:
+      hosts:
+        hardway:
