@@ -2,4 +2,4 @@
 - hosts: localhost
   remote_user: root
   roles:
-    - k8s_control_plane
+    - k8s
