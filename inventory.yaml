@@ -14,6 +14,6 @@ all:
       hosts:
         k8sw-1:
         k8sw-2:
-    k8s_balancer:
-      hosts:
-        hardway:
+#    k8s_balancer:
+#      hosts:
+#        hardway:

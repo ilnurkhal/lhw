@@ -1,4 +1,4 @@
 ---
-- hosts: k8s_worker
+- hosts: all
   roles:
   - k8s_certs
