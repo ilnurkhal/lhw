@@ -1,0 +1,15 @@
+---
+- name: Check kubectl exists
+  stat:
+    path: /usr/local/bin/cfssljson
+  register: kubectl_exist
+
+- name: Download kubectl
+  when: not kubectl_exist.stat.exists
+  local_action:
+    module: get_url
+    url: https://storage.googleapis.com/kubernetes-release/release/v{{ kubectl_version }}/bin/linux/amd64/kubectl
+    dest: /usr/local/bin/
+    mode: '0751'
+
+...

@@ -2,7 +2,6 @@
 # defaults file for k8s_certs
 cfssl_version: 1.4.1
 cfssljson_version: 1.4.1
-kubectl_version: 1.20.0
 
 # Cert data
 CN: Kubernetes

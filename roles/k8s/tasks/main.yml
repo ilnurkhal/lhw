@@ -1,2 +1,3 @@
 ---
-# tasks file for k8s
+- include: tools.yml
+- include: configs.yml
