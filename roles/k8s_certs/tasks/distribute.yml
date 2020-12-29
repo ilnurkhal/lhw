@@ -1,0 +1,26 @@
+---
+- name: Distribute workers Certificates
+  copy:
+    src: "{{ tmp_data_dir }}/{{ item }}"
+    dest: ~/
+    remote_src: no
+  when: groups['k8s_worker'] is defined and inventory_hostname in groups['k8s_worker']
+  with_items:
+  - "ca.pem" 
+  - "{{ inventory_hostname }}-key.pem"
+  - "{{ inventory_hostname }}.pem"
+
+- name: Distribute controlplane Certificates
+  copy:
+    src: "{{ tmp_data_dir }}/{{ item }}"
+    dest: ~/
+    remote_src: no
+  when: groups['k8s_control_plane'] is defined and inventory_hostname in groups['k8s_control_plane']
+  with_items:
+  - ca.pem
+  - ca-key.pem
+  - kubernetes-key.pem
+  - kubernetes.pem
+  - service-account-key.pem
+  - service-account.pem
+...

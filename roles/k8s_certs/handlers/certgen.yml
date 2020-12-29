@@ -1,0 +1,109 @@
+---
+- name: Generate CA cert
+  listen: "ca cert"
+  run_once: True
+  delegate_to: 127.0.0.1
+  shell: > 
+    cfssl gencert -initca {{ tmp_data_dir }}/ca-csr.json | 
+    cfssljson -bare {{ tmp_data_dir }}/ca
+
+- name: Generate The Admin Client Certificate
+  listen: "ca cert"
+  run_once: True
+  delegate_to: 127.0.0.1
+  shell: > 
+    cfssl gencert -ca={{ tmp_data_dir }}/ca.pem 
+    -ca-key={{ tmp_data_dir }}/ca-key.pem 
+    -config={{ tmp_data_dir }}/ca-config.json 
+    -profile=kubernetes  {{ tmp_data_dir }}/admin-csr.json | 
+    cfssljson -bare {{ tmp_data_dir }}/admin
+
+- name: Checking which certs should be generated
+  run_once: True
+  delegate_to: 127.0.0.1
+  stat:
+    path:  "{{ tmp_data_dir }}/{{ item }}.pem"
+  register: kubelet_certs_data
+  with_items: "{{ groups['k8s_worker'] }}"
+
+- name: Generating The Kubelet Client Certificates
+  delegate_to: 127.0.0.1
+  run_once: True
+  with_items: "{{ kubelet_certs_data.results }}"
+  when: not item.stat.exists
+  shell: >
+    cfssl gencert -ca={{ tmp_data_dir }}/ca.pem 
+    -ca-key={{ tmp_data_dir }}/ca-key.pem 
+    -config={{ tmp_data_dir }}/ca-config.json 
+    -profile=kubernetes 
+    -hostname={{ item.item }} {{ tmp_data_dir }}/{{ item.item }}-csr.json | 
+    cfssljson -bare {{ tmp_data_dir }}/{{ item.item }}
+
+- name: Regenerating The Kubelet Client Certificates
+  listen: "ca cert"
+  delegate_to: 127.0.0.1
+  with_items: "{{ groups['k8s_worker'] }}"
+  shell: >
+    cfssl gencert -ca={{ tmp_data_dir }}/ca.pem 
+    -ca-key={{ tmp_data_dir }}/ca-key.pem 
+    -config={{ tmp_data_dir }}/ca-config.json 
+    -profile=kubernetes 
+    -hostname={{ item }} {{ tmp_data_dir }}/{{ item }}-csr.json | 
+    cfssljson -bare {{ tmp_data_dir }}/{{ item }}
+
+- name: Generate The Controller Manager Client Certificate
+  listen: "ca cert"
+  run_once: True
+  delegate_to: 127.0.0.1
+  shell: >
+    cfssl gencert -ca={{ tmp_data_dir }}/ca.pem 
+    -ca-key={{ tmp_data_dir }}/ca-key.pem 
+    -config={{ tmp_data_dir }}/ca-config.json 
+    -profile=kubernetes {{ tmp_data_dir }}/kube-controller-manager-csr.json | 
+    cfssljson -bare {{ tmp_data_dir }}/kube-controller-manager
+
+- name: Generate The Kube Proxy Client Certificate
+  listen: "ca cert"
+  run_once: True
+  delegate_to: 127.0.0.1
+  shell: >
+    cfssl gencert -ca={{ tmp_data_dir }}/ca.pem 
+    -ca-key={{ tmp_data_dir }}/ca-key.pem 
+    -config={{ tmp_data_dir }}/ca-config.json 
+    -profile=kubernetes {{ tmp_data_dir }}/kube-proxy-csr.json | 
+    cfssljson -bare {{ tmp_data_dir }}/kube-proxy
+
+- name: Generate The Scheduler Client Certificate
+  listen: "ca cert"
+  run_once: True
+  delegate_to: 127.0.0.1
+  shell: > 
+    cfssl gencert -ca={{ tmp_data_dir }}/ca.pem 
+    -ca-key={{ tmp_data_dir }}/ca-key.pem 
+    -config={{ tmp_data_dir }}/ca-config.json 
+    -profile=kubernetes {{ tmp_data_dir }}/kube-scheduler-csr.json | 
+    cfssljson -bare {{ tmp_data_dir }}/kube-scheduler
+
+- name: Generate The Kubernetes API Server Certificate
+  listen: "ca cert"
+  run_once: True
+  delegate_to: 127.0.0.1
+  shell: > 
+    cfssl gencert -ca={{ tmp_data_dir }}/ca.pem 
+    -ca-key={{ tmp_data_dir }}/ca-key.pem 
+    -config={{ tmp_data_dir }}/ca-config.json
+    -hostname={{kubernetes_hostnames}},127.0.0.1,10.32.0.1,{{ groups['k8s_control_plane'] | list | join(',') }} 
+    -profile=kubernetes {{ tmp_data_dir }}/kubernetes-csr.json | 
+    cfssljson -bare {{ tmp_data_dir }}/kubernetes
+
+- name: Generate The Kubernetes Service Account Certificate
+  listen: "ca cert"
+  run_once: True
+  delegate_to: 127.0.0.1
+  shell: > 
+    cfssl gencert -ca={{ tmp_data_dir }}/ca.pem 
+    -ca-key={{ tmp_data_dir }}/ca-key.pem 
+    -config={{ tmp_data_dir }}/ca-config.json 
+    -profile=kubernetes {{ tmp_data_dir }}/service-account-csr.json | 
+    cfssljson -bare {{ tmp_data_dir }}/service-account
+...

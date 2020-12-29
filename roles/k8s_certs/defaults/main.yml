@@ -12,7 +12,7 @@ OU: CA
 ST: Ekaterinburg
 algo: rsa
 size: 2048
-expiry: 8760h
+expiry: 9000h
 
 # temp data dir
 tmp_data_dir:  /tmp/kubernetes-files

@@ -1,0 +1,90 @@
+---
+- name: Create a temp directory if it does not exist
+  run_once: True
+  local_action:
+    module: file
+    path: "{{ tmp_data_dir }}"
+    state: directory
+    mode: '0755'
+
+- name: render ca-csr.json
+  run_once: True
+  local_action:
+    module: template
+    src: ca-csr.j2
+    dest: "{{ tmp_data_dir }}/ca-csr.json"
+  notify: "ca cert"
+  
+- name: render ca-config.json
+  run_once: True
+  local_action:
+    module: template
+    src: ca-config.j2
+    dest: "{{ tmp_data_dir }}/ca-config.json"
+  notify: "ca cert"
+
+- name: Force all notified handlers to run at this point, not waiting for normal sync points
+  meta: flush_handlers
+
+- name: render admin-csr.json
+  run_once: True
+  local_action:
+    module: template
+    src: admin-csr.j2
+    dest: "{{ tmp_data_dir }}/admin-csr.json"
+  notify: Generate The Admin Client Certificate
+
+- name: render kube-controller-manager-csr.json
+  run_once: True
+  local_action:
+    module: template
+    src: kube-controller-manager-csr.j2
+    dest: "{{ tmp_data_dir }}/kube-controller-manager-csr.json"
+  notify: Generate The Controller Manager Client Certificate
+
+- name: render kube-proxy-csr.json
+  run_once: True
+  local_action:
+    module: template
+    src: kube-proxy-csr.j2
+    dest: "{{ tmp_data_dir }}/kube-proxy-csr.json"
+  notify: Generate The Kube Proxy Client Certificate
+
+- name: render kube-scheduler-csr.json
+  run_once: True
+  local_action:
+    module: template
+    src: kube-scheduler-csr.j2
+    dest: "{{ tmp_data_dir }}/kube-scheduler-csr.json"
+  notify: Generate The Scheduler Client Certificate
+
+- name: render kubernetes-csr.json
+  run_once: True
+  local_action:
+    module: template
+    src: kubernetes-csr.j2
+    dest: "{{ tmp_data_dir }}/kubernetes-csr.json"
+  notify: Generate The Kubernetes API Server Certificate
+    
+- name: render The Kubelet Client csr
+  run_once: True
+  local_action:
+    module: template
+    src: instance-csr.j2
+    dest: "{{ tmp_data_dir }}/{{ item }}-csr.json"
+  with_items: "{{ groups['k8s_worker'] }}"
+  notify:
+    - Checking which certs should be generated
+    - Generating The Kubelet Client Certificates
+
+- name: render service-account-csr.json
+  run_once: True
+  local_action:
+    module: template
+    src: service-account-csr.j2
+    dest: "{{ tmp_data_dir }}/service-account-csr.json"
+  notify: Generate The Kubernetes Service Account Certificate
+
+- name: Force all notified handlers to run at this point, not waiting for normal sync points
+  meta: flush_handlers
+...
