@@ -1,34 +1,48 @@
 ---
 - name: Generate The kubelet Kubernetes Configuration File
   when: groups['k8s_worker'] is defined and inventory_hostname in groups['k8s_worker']
-  shell: > 
-    kubectl config set-cluster {{ cluster_name }} \
-    --certificate-authority=ca.pem \
-    --embed-certs=true \
-    --server=https://{{ kubernetes_public_address }}:6443 \
-    --kubeconfig={{ inventory_hostname_short }}.kubeconfig
+  shell: "{{ item }}"
+  with_items: 
+  - kubectl config set-cluster {{ cluster_name }} --certificate-authority=ca.pem --embed-certs=true --server=https://{{ kubernetes_public_address }}:6443 --kubeconfig={{ inventory_hostname_short }}.kubeconfig
+  - kubectl config set-credentials system:node:{{ inventory_hostname_short }} --client-certificate={{ inventory_hostname_short }}.pem --client-key={{ inventory_hostname_short }}-key.pem --embed-certs=true --kubeconfig={{ inventory_hostname_short }}.kubeconfig
+  - kubectl config set-context default --cluster={{ cluster_name }} --user=system:node:{{ inventory_hostname_short }} --kubeconfig={{ inventory_hostname_short }}.kubeconfig
+  - kubectl config use-context default --kubeconfig={{ inventory_hostname_short }}.kubeconfig     
 
-- name: Generate The kubelet Kubernetes Configuration File
+- name: Generate The kube-proxy Kubernetes Configuration File
   when: groups['k8s_worker'] is defined and inventory_hostname in groups['k8s_worker']
-  shell: > 
-    kubectl config set-credentials system:node:{{ inventory_hostname_short }} \
-    --client-certificate={{ inventory_hostname_short }}.pem \
-    --client-key={{ inventory_hostname_short }}-key.pem \
-    --embed-certs=true \
-    --kubeconfig={{ inventory_hostname_short }}.kubeconfig
+  shell: "{{ item }}"
+  with_items:
+  - kubectl config set-cluster {{ cluster_name }} --certificate-authority=ca.pem --embed-certs=true --server=https://{{ kubernetes_public_address }}:6443 --kubeconfig=kube-proxy.kubeconfig
+  - kubectl config set-credentials system:kube-proxy --client-certificate=kube-proxy.pem --client-key=kube-proxy-key.pem --embed-certs=true --kubeconfig=kube-proxy.kubeconfig
+  - kubectl config set-context default --cluster={{ cluster_name }} --user=system:kube-proxy --kubeconfig=kube-proxy.kubeconfig
+  - kubectl config use-context default --kubeconfig=kube-proxy.kubeconfig
 
-- name: Generate The kubelet Kubernetes Configuration File
-  when: groups['k8s_worker'] is defined and inventory_hostname in groups['k8s_worker']
-  shell: > 
-    kubectl config set-context default \
-    --cluster={{ cluster_name }} \
-    --user=system:node:{{ inventory_hostname_short }} \
-    --kubeconfig={{ inventory_hostname_short }}.kubeconfig
+# Control Plane
 
-- name: Generate The kubelet Kubernetes Configuration File
-  when: groups['k8s_worker'] is defined and inventory_hostname in groups['k8s_worker']
-  shell: > 
-    kubectl config use-context default --kubeconfig={{ inventory_hostname_short }}.kubeconfig
-     
+- name: Generate The kube-controller-manager Kubernetes Configuration File
+  when: groups['k8s_control_plane'] is defined and inventory_hostname in groups['k8s_control_plane']
+  shell: "{{ item }}"
+  with_items:
+  - kubectl config set-cluster {{ cluster_name }} --certificate-authority=ca.pem --embed-certs=true --server=https://127.0.0.1:6443 --kubeconfig=kube-controller-manager.kubeconfig
+  - kubectl config set-credentials system:kube-controller-manager --client-certificate=kube-controller-manager.pem --client-key=kube-controller-manager-key.pem --embed-certs=true --kubeconfig=kube-controller-manager.kubeconfig 
+  - kubectl config set-context default --cluster={{ cluster_name }} --user=system:kube-controller-manager --kubeconfig=kube-controller-manager.kubeconfig
+  - kubectl config use-context default --kubeconfig=kube-controller-manager.kubeconfig
 
+- name: Generate The kube-scheduler Kubernetes Configuration File
+  when: groups['k8s_control_plane'] is defined and inventory_hostname in groups['k8s_control_plane']
+  shell: "{{ item }}"
+  with_items:
+  - kubectl config set-cluster {{ cluster_name }} --certificate-authority=ca.pem --embed-certs=true --server=https://127.0.0.1:6443 --kubeconfig=kube-scheduler.kubeconfig
+  - kubectl config set-credentials system:kube-scheduler --client-certificate=kube-scheduler.pem --client-key=kube-scheduler-key.pem --embed-certs=true --kubeconfig=kube-scheduler.kubeconfig
+  - kubectl config set-context default --cluster={{ cluster_name }} --user=system:kube-scheduler --kubeconfig=kube-scheduler.kubeconfig
+  - kubectl config use-context default --kubeconfig=kube-scheduler.kubeconfig
+
+- name: Generate The admin Kubernetes Configuration File
+  when: groups['k8s_control_plane'] is defined and inventory_hostname in groups['k8s_control_plane']
+  shell: "{{ item }}"
+  with_items:
+  - kubectl config set-cluster {{ cluster_name }} --certificate-authority=ca.pem --embed-certs=true --server=https://127.0.0.1:6443 --kubeconfig=admin.kubeconfig
+  - kubectl config set-credentials admin --client-certificate=admin.pem --client-key=admin-key.pem --embed-certs=true --kubeconfig=admin.kubeconfig
+  - kubectl config set-context default --cluster={{ cluster_name }} --user=admin --kubeconfig=admin.kubeconfig
+  - kubectl config use-context default --kubeconfig=admin.kubeconfig
 ...
