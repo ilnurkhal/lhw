@@ -1,2 +1,4 @@
 ---
 # defaults file for etcd
+etcd_version: 3.4.10
+etcd_datadir: /var/lib/etcd

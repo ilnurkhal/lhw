@@ -3,3 +3,4 @@
 kubectl_version: 1.20.0
 kubernetes_public_address: hardway
 cluster_name: hardway
+encryption_key: KgTD+3zMJDYfbusnNx+VdY3wSVembfu9MDgpJSmezzw=

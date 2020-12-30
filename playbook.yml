@@ -2,4 +2,6 @@
 - hosts: k8s_worker, k8s_control_plane
   roles:
   - k8s_certs
+  - etcd
   - k8s
+

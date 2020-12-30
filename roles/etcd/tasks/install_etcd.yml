@@ -1,0 +1,48 @@
+---
+- name: Create etcd directory if it does not exist
+  when: groups['etcd'] is defined and inventory_hostname in groups['etcd']
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  with_items:
+  - /etc/etcd
+  - "{{ etcd_datadir }}"
+
+- name: Copy certs
+  copy:
+    src: {{ item }}
+    dest: /etc/etcd/
+  with_items:
+  - ca.pem
+  - kubernetes-key.pem
+  - kubernetes.pem
+  notify:
+  - "restart etcd"
+
+- name: Download and unarchive etcd
+  when: groups['etcd'] is defined and inventory_hostname in groups['etcd']
+  unarchive:
+    src: https://github.com/etcd-io/etcd/releases/download/v{{ etcd_version }}/etcd-v{{ etcd_version }}-linux-amd64.tar.gz
+    dest: ~/
+    remote_src: yes
+
+- name: Copy etcd to bin
+  copy:
+    src: ~/etcd-v{{ etcd_version }}-linux-amd64/{{item}}
+    dest: /usr/local/bin/
+  with_items:
+  - etcd
+  - etcdctl
+  notify:
+  - "restart etcd"
+
+- name: Rendering etcd's systemd-unit
+  template:
+    src: etcd.service.j2
+    dest: "/etc/systemd/system/etcd.service"
+  notify: 
+  - "daemon-reload"
+  - "enable etcd"
+  - "start etcd"
+...

@@ -1,3 +1,4 @@
 ---
 - include: tools.yml
 - include: configs.yml
+- include: encryption.yml
