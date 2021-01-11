@@ -1,10 +1,7 @@
 ---
-
 - name: "daemon-reload"
   systemd:
-    name: etcd
     daemon_reload: yes
-
 
 - name: "enable etcd"
   systemd:
@@ -20,3 +17,4 @@
   systemd:
     name: etcd
     state: restarted
+...

@@ -2,5 +2,6 @@
 - name: render encryption-config.yaml
   template:
     src: encryption-config.j2
-    dest: "encryption-config.yaml"
+    dest: "{{ control_plane_cert_and_context_dir }}/encryption-config.yaml"
+  when: etcd_encryption
 ...

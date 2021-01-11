@@ -1,6 +1,31 @@
 ---
-# defaults file for k8s
+# defaults for k8s
+control_plane_cert_and_context_dir: /var/lib/kubernetes/
+control_plane_conf_dir: /etc/kubernetes/config
+kube_apiserver_version: 1.18.6
+kube_controller_manager_version: 1.18.6
+kube_scheduler_version: 1.18.6
+
+audit_log_max_size: 100
+audit_log_maxbackup: 3
+audit_log_maxage: 30
+
+cluster_cidr: 10.200.0.0/16
+service_cluster_ip_range: 10.32.0.0/24
+node_port_range: 30000-32767
+event_ttl: 1h
+
+enabled_admission_plugins:
+  - NamespaceLifecycle
+  - NodeRestriction
+  - LimitRanger
+  - ServiceAccount
+  - DefaultStorageClass
+  - ResourceQuota
+
+
 kubectl_version: 1.20.0
 kubernetes_public_address: hardway
 cluster_name: hardway
+etcd_encryption: true
 encryption_key: KgTD+3zMJDYfbusnNx+VdY3wSVembfu9MDgpJSmezzw=

@@ -11,7 +11,7 @@
 
 - name: Copy certs
   copy:
-    src: {{ item }}
+    src: "{{ item }}"
     dest: /etc/etcd/
   with_items:
   - ca.pem
@@ -35,7 +35,7 @@
   - etcd
   - etcdctl
   notify:
-  - "restart etcd"
+  - "enable etcd"
 
 - name: Rendering etcd's systemd-unit
   template:
@@ -43,6 +43,6 @@
     dest: "/etc/systemd/system/etcd.service"
   notify: 
   - "daemon-reload"
-  - "enable etcd"
-  - "start etcd"
+  - "restart etcd"
+#  - "start etcd"
 ...

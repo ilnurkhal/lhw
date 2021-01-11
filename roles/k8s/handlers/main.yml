@@ -1,2 +1,43 @@
 ---
-# handlers file for k8s
+- name: "daemon-reload"
+  systemd:
+    daemon_reload: yes
+
+- name: "restart control plane"
+  systemd:
+    name: "{{ item }}"
+    state: restarted
+  with_items:
+  - kube-apiserver
+  - kube-controller-manager
+  - kube-scheduler
+
+- name: "restart apiserver"
+  systemd:
+    name: kube-apiserver
+    state: restarted
+
+- name: "restart controller_manager"
+  systemd:
+    name: kube-controller-manager
+    state: restarted
+
+- name: "restart scheduler"
+  systemd:
+    name: kube-scheduler
+    state: restarted
+
+- name: "enable apiserver"
+  systemd:
+    name: kube-apiserver
+    enabled: yes
+
+- name: "enable scheduler"
+  systemd:
+    name: kube-scheduler
+    enabled: yes
+
+- name: "enable controller_manager"
+  systemd:
+    name: kube-controller-manager
+    enabled: yes
