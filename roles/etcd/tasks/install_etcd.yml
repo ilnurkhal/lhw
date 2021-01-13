@@ -4,13 +4,14 @@
   file:
     path: "{{ item }}"
     state: directory
-    mode: '0755'
+    mode: '0700'
   with_items:
   - /etc/etcd
   - "{{ etcd_datadir }}"
 
 - name: Copy certs
   copy:
+    remote_src: yes
     src: "{{ item }}"
     dest: /etc/etcd/
   with_items:
@@ -19,6 +20,7 @@
   - kubernetes.pem
   notify:
   - "restart etcd"
+  when: groups['etcd'] is defined and inventory_hostname in groups['etcd']
 
 - name: Download and unarchive etcd
   when: groups['etcd'] is defined and inventory_hostname in groups['etcd']
@@ -29,13 +31,16 @@
 
 - name: Copy etcd to bin
   copy:
+    remote_src: yes
+    mode: '0751'
     src: ~/etcd-v{{ etcd_version }}-linux-amd64/{{item}}
     dest: /usr/local/bin/
   with_items:
   - etcd
   - etcdctl
   notify:
-  - "enable etcd"
+  - "restart etcd"
+  when: groups['etcd'] is defined and inventory_hostname in groups['etcd']
 
 - name: Rendering etcd's systemd-unit
   template:
@@ -43,6 +48,7 @@
     dest: "/etc/systemd/system/etcd.service"
   notify: 
   - "daemon-reload"
+  - "enable etcd"
   - "restart etcd"
-#  - "start etcd"
+  when: groups['etcd'] is defined and inventory_hostname in groups['etcd']
 ...
