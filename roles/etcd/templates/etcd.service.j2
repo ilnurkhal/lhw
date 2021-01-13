@@ -1,6 +1,6 @@
 {%- macro cluster_hosts() -%}
 {%- for host in groups['etcd'] -%}
-{{hostvars[host]['ansible_hostname']}}=https://{{hostvars[host]['ansible_default_ipv4']['address']}}:2380{% if not loop.last %},{% endif %}
+{{hostvars[host]['ansible_hostname']}}=https://{{hostvars[host]['ansible_host']}}:2380{% if not loop.last %},{% endif %}
 {%- endfor -%} 
 {%- endmacro -%}
 
@@ -20,10 +20,10 @@ ExecStart=/usr/local/bin/etcd \
   --peer-trusted-ca-file=/etc/etcd/ca.pem \
   --peer-client-cert-auth \
   --client-cert-auth \
-  --initial-advertise-peer-urls https://{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:2380 \
-  --listen-peer-urls https://{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:2380 \
-  --listen-client-urls https://{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:2379,https://127.0.0.1:2379 \
-  --advertise-client-urls https://{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:2379 \
+  --initial-advertise-peer-urls https://{{ hostvars[inventory_hostname]['ansible_host'] }}:2380 \
+  --listen-peer-urls https://{{ hostvars[inventory_hostname]['ansible_host'] }}:2380 \
+  --listen-client-urls https://{{ hostvars[inventory_hostname]['ansible_host'] }}:2379,https://127.0.0.1:2379 \
+  --advertise-client-urls https://{{ hostvars[inventory_hostname]['ansible_host'] }}:2379 \
   --initial-cluster-token etcd-cluster-0 \
   --initial-cluster {{ cluster_hosts() }} \
   --initial-cluster-state new \

@@ -1,3 +1,4 @@
 ---
 # tasks file for etcd
+- include: common.yml
 - include: install_etcd.yml

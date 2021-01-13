@@ -9,7 +9,16 @@
   - "{{ control_plane_cert_and_context_dir }}"
   - "{{ control_plane_conf_dir }}"
 
+- name: render encryption-config.yaml
+  when: etcd_encryption and groups['k8s_control_plane'] is defined and inventory_hostname in groups['k8s_control_plane']
+  template:
+    src: encryption-config.j2
+    dest: "{{ control_plane_cert_and_context_dir }}/encryption-config.yaml"
+  notify:
+  - "restart control plane"
+
 - name: Download kube-apiserver
+  when: groups['k8s_control_plane'] is defined and inventory_hostname in groups['k8s_control_plane']
   get_url:
     url: https://storage.googleapis.com/kubernetes-release/release/v{{ kube_apiserver_version }}/bin/linux/amd64/kube-apiserver
     dest: /usr/local/bin/
@@ -18,14 +27,16 @@
   - "restart apiserver"
 
 - name: Download kube-controller-manager
+  when: groups['k8s_control_plane'] is defined and inventory_hostname in groups['k8s_control_plane']
   get_url:
-    url: https://storage.googleapis.com/kubernetes-release/release/v{{ kube_controller_manager_version }}/bin/linux/amd64/kube-controller-manage
+    url: https://storage.googleapis.com/kubernetes-release/release/v{{ kube_controller_manager_version }}/bin/linux/amd64/kube-controller-manager
     dest: /usr/local/bin/
     mode: '0751'
   notify:
   - "restart controller_manager"
 
 - name: Download kube-scheduler
+  when: groups['k8s_control_plane'] is defined and inventory_hostname in groups['k8s_control_plane']
   get_url:
     url: https://storage.googleapis.com/kubernetes-release/release/v{{ kube_scheduler_version }}/bin/linux/amd64/kube-scheduler
     dest: /usr/local/bin/
@@ -35,7 +46,9 @@
   
 
 - name: Copying certs
+  when: groups['k8s_control_plane'] is defined and inventory_hostname in groups['k8s_control_plane']
   copy:
+    remote_src: yes
     src: "{{ item }}"
     dest: "{{ control_plane_cert_and_context_dir }}"
   with_items:
@@ -45,12 +58,13 @@
   - kubernetes.pem
   - service-account-key.pem
   - service-account.pem
-  - encryption-config.yam
   notify:
   - "restart control plane"
 
 - name: Copy manifests
+  when: groups['k8s_control_plane'] is defined and inventory_hostname in groups['k8s_control_plane']
   copy:
+    remote_src: yes
     src: "{{ item }}"
     dest: "{{ control_plane_cert_and_context_dir }}"
   with_items:
@@ -60,6 +74,7 @@
   - "restart control plane"
 
 - name: Rendering scheduler config
+  when: groups['k8s_control_plane'] is defined and inventory_hostname in groups['k8s_control_plane']
   template:
     src: kube-scheduler.kubeconfig.j2
     dest: "{{ control_plane_conf_dir }}/kube-scheduler.yaml"
@@ -67,6 +82,7 @@
   - "restart scheduler"
 
 - name: Rendering apiserver systemd-unit
+  when: groups['k8s_control_plane'] is defined and inventory_hostname in groups['k8s_control_plane']
   template:
     src: kube-apiserver.service.j2
     dest: "/etc/systemd/system/kube-apiserver.service"
@@ -76,6 +92,7 @@
   - "restart apiserver"
 
 - name: Rendering controller-manager systemd-unit
+  when: groups['k8s_control_plane'] is defined and inventory_hostname in groups['k8s_control_plane']
   template:
     src: kube-controller-manager.service.j2
     dest: "/etc/systemd/system/kube-controller-manager.service"
@@ -85,6 +102,7 @@
   - "restart controller_manager"
 
 - name: Rendering scheduler systemd-unit
+  when: groups['k8s_control_plane'] is defined and inventory_hostname in groups['k8s_control_plane']
   template:
     src: kube-scheduler.service.j2
     dest: "/etc/systemd/system/kube-scheduler.service"

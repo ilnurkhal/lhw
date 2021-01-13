@@ -1,6 +1,5 @@
 ---
 - include: tools.yml
 - include: configs.yml
-- include: encryption.yml
 - include: control_plane.yml
 - include: applying_manifests.yml
