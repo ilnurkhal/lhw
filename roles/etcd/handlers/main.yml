@@ -5,7 +5,7 @@
 
 - name: "enable etcd"
   systemd:
-    name: etcd
+    name: etcd.service
     enabled: yes
 
 - name: "start etcd"

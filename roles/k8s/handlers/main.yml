@@ -8,9 +8,9 @@
     name: "{{ item }}"
     state: restarted
   with_items:
-  - kube-apiserver
-  - kube-controller-manager
-  - kube-scheduler
+  - kube-apiserver.service
+  - kube-controller-manager.service
+  - kube-scheduler.service
 
 - name: "restart apiserver"
   systemd:
@@ -29,15 +29,15 @@
 
 - name: "enable apiserver"
   systemd:
-    name: kube-apiserver
+    name: kube-apiserver.service
     enabled: yes
 
 - name: "enable scheduler"
   systemd:
-    name: kube-scheduler
+    name: kube-scheduler.service
     enabled: yes
 
 - name: "enable controller_manager"
   systemd:
-    name: kube-controller-manager
+    name: kube-controller-manager.service
     enabled: yes

@@ -15,7 +15,7 @@
     src: encryption-config.j2
     dest: "{{ control_plane_cert_and_context_dir }}/encryption-config.yaml"
   notify:
-  - "restart control plane"
+    - restart control plane
 
 - name: Download kube-apiserver
   when: groups['k8s_control_plane'] is defined and inventory_hostname in groups['k8s_control_plane']
@@ -24,7 +24,7 @@
     dest: /usr/local/bin/
     mode: '0751'
   notify:
-  - "restart apiserver"
+    - restart apiserver
 
 - name: Download kube-controller-manager
   when: groups['k8s_control_plane'] is defined and inventory_hostname in groups['k8s_control_plane']
@@ -33,7 +33,7 @@
     dest: /usr/local/bin/
     mode: '0751'
   notify:
-  - "restart controller_manager"
+    - restart controller_manager
 
 - name: Download kube-scheduler
   when: groups['k8s_control_plane'] is defined and inventory_hostname in groups['k8s_control_plane']
@@ -42,7 +42,7 @@
     dest: /usr/local/bin/
     mode: '0751'
   notify:
-  - "restart scheduler"
+    - restart scheduler
   
 
 - name: Copying certs
@@ -59,7 +59,7 @@
   - service-account-key.pem
   - service-account.pem
   notify:
-  - "restart control plane"
+    - restart control plane
 
 - name: Copy manifests
   when: groups['k8s_control_plane'] is defined and inventory_hostname in groups['k8s_control_plane']
@@ -71,7 +71,7 @@
   - kube-controller-manager.kubeconfig
   - kube-scheduler.kubeconfig
   notify:
-  - "restart control plane"
+    - restart control plane
 
 - name: Rendering scheduler config
   when: groups['k8s_control_plane'] is defined and inventory_hostname in groups['k8s_control_plane']
@@ -79,17 +79,17 @@
     src: kube-scheduler.kubeconfig.j2
     dest: "{{ control_plane_conf_dir }}/kube-scheduler.yaml"
   notify: 
-  - "restart scheduler"
+    - restart scheduler
 
 - name: Rendering apiserver systemd-unit
   when: groups['k8s_control_plane'] is defined and inventory_hostname in groups['k8s_control_plane']
   template:
     src: kube-apiserver.service.j2
     dest: "/etc/systemd/system/kube-apiserver.service"
-  notify: 
-  - "daemon-reload"
-  - "enable apiserver"
-  - "restart apiserver"
+  notify:
+    - daemon-reload
+    - enable apiserver
+    - restart apiserver
 
 - name: Rendering controller-manager systemd-unit
   when: groups['k8s_control_plane'] is defined and inventory_hostname in groups['k8s_control_plane']
@@ -97,9 +97,9 @@
     src: kube-controller-manager.service.j2
     dest: "/etc/systemd/system/kube-controller-manager.service"
   notify: 
-  - "daemon-reload"
-  - "enable controller_manager"
-  - "restart controller_manager"
+    - daemon-reload
+    - enable controller_manager
+    - restart controller_manager
 
 - name: Rendering scheduler systemd-unit
   when: groups['k8s_control_plane'] is defined and inventory_hostname in groups['k8s_control_plane']
@@ -107,8 +107,8 @@
     src: kube-scheduler.service.j2
     dest: "/etc/systemd/system/kube-scheduler.service"
   notify: 
-  - "daemon-reload"
-  - "enable scheduler"
-  - "restart scheduler"
+    - daemon-reload
+    - enable scheduler
+    - restart scheduler
 
 ...
