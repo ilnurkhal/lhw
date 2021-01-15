@@ -12,6 +12,7 @@
   run_once: True
   community.kubernetes.k8s:
     state: present
+    kubeconfig: admin.kubeconfig
     definition:
       apiVersion: rbac.authorization.k8s.io/v1beta1
       kind: ClusterRole
@@ -37,6 +38,7 @@
   run_once: True
   community.kubernetes.k8s:
     state: present
+    kubeconfig: admin.kubeconfig
     definition:
       apiVersion: rbac.authorization.k8s.io/v1beta1
       kind: ClusterRoleBinding
