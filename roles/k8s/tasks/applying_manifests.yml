@@ -8,6 +8,12 @@
   pip:
     name: openshift
 
+- name: Provide config for kubectl
+  copy:
+    remote_src: yes
+    src: admin.kubeconfig
+    dest: ~/.kube/config
+
 - name: ClusterRole system:kube-apiserver-to-kubelet
   run_once: True
   community.kubernetes.k8s:
