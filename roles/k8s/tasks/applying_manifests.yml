@@ -19,7 +19,11 @@
 
 - name: ClusterRole system:kube-apiserver-to-kubelet
   run_once: True
-  community.kubernetes.k8s:
+  delegate_to: "{{ groups['k8s_control_plane'][0] }}"
+  environment:
+    K8S_AUTH_KUBECONFIG: ~/.kube/config
+  k8s:
+    kubeconfig: ~/.kube/config
     state: present
     definition:
       apiVersion: rbac.authorization.k8s.io/v1beta1
@@ -44,7 +48,11 @@
 
 - name: ClusterRoleBinding system:kube-apiserver-to-kubelet
   run_once: True
-  community.kubernetes.k8s:
+  delegate_to: "{{ groups['k8s_control_plane'][0] }}"
+  environment:
+    K8S_AUTH_KUBECONFIG: ~/.kube/config
+  k8s:
+    kubeconfig: ~/.kube/config
     state: present
     definition:
       apiVersion: rbac.authorization.k8s.io/v1beta1
