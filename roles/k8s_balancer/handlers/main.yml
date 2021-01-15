@@ -1,2 +1,5 @@
 ---
-# handlers file for k8s_balancer
+- name: reload haproxy
+  systemd:
+    name: haproxy
+    state: reloaded

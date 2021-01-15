@@ -1,2 +1,2 @@
 ---
-# tasks file for k8s_balancer
+- include: setup_balancer.yml
