@@ -1,0 +1,12 @@
+---
+- name: Install common packages for worker
+  when: groups['k8s_worker'] is defined and inventory_hostname in groups['k8s_worker']
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+  - socat
+  - conntrack
+  - ipset
+
+...

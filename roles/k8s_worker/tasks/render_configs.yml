@@ -1,0 +1,17 @@
+---
+- name: Rendering containerd config
+  template:
+    src: containerd.config.j2
+    dest: "/etc/containerd/config.toml"
+  notify: 
+  - "restart containerd"
+
+- name: Rendering containerd service
+  template:
+    src: containerd.service.j2
+    dest: "/etc/systemd/system/containerd.service"
+  notify: 
+  - "daemon-reload"
+  - "enable containerd"
+  - "restart containerd"
+...

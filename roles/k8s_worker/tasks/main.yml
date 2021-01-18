@@ -1,0 +1,9 @@
+---
+- include: configs.yml
+- include: disable_swap.yml
+- include: packages.yml
+- include: binaries.yml
+- include: render_configs.yml
+- include: kubelet_conf.yml
+- include: kube_proxy_conf.yml
+  when: use_kube_proxy

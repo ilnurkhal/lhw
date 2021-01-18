@@ -1,0 +1,80 @@
+---
+- name: Create directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  with_items:
+  - /etc/cni/net.d
+  - /opt/cni/bin
+  - /var/lib/kubelet
+  - /var/lib/kube-proxy
+  - /var/lib/kubernetes
+  - /var/run/kubernetes
+  - /etc/containerd/
+
+- name: Download kube-proxy
+  when: use_kube_proxy
+  get_url:
+    url: https://storage.googleapis.com/kubernetes-release/release/v{{ kube_proxy_version }}/bin/linux/amd64/kube-proxy 
+    dest: /usr/local/bin/
+    mode: '0751'
+  notify:
+    - restart kube-proxy
+
+- name: Download kubelet
+  get_url:
+    url: https://storage.googleapis.com/kubernetes-release/release/v{{ kubelet_version }}/bin/linux/amd64/kubelet
+    dest: /usr/local/bin/
+    mode: '0751'
+  notify:
+    - restart kubelet
+
+- name: Download cri-tools
+  get_url:
+    url: https://github.com/kubernetes-sigs/cri-tools/releases/download/v{{ crictl_version }}/crictl-v{{ crictl_version }}-linux-amd64.tar.gz 
+    dest: /usr/local/bin/
+    mode: '0751'
+
+- name: Download cri-tools
+  unarchive:
+    src: https://github.com/kubernetes-sigs/cri-tools/releases/download/v{{ crictl_version }}/crictl-v{{ crictl_version }}-linux-amd64.tar.gz 
+    dest: ~/
+    remote_src: yes
+
+- name: Download runC
+  unarchive:
+    src: https://github.com/opencontainers/runc/releases/download/{{ runc_version }}/runc.amd64
+    dest: ~/runc
+    remote_src: yes
+
+#- name: Download CNI-Plugin
+#  unarchive:
+#    src: https://github.com/containernetworking/plugins/releases/download/v{{ cni_plugin_version }}/cni-plugins-linux-amd64-v{{ cni_plugin_version }}.tgz
+#    dest: ~/
+#    remote_src: yes
+
+- name: Download ContainerD
+  unarchive:
+    src: https://github.com/containerd/containerd/releases/download/v{{ containerd_version }}/containerd-{{ containerd_version }}-linux-amd64.tar.gz
+    dest: ~/containerd/
+    remote_src: yes
+
+- name: Copy containerd to /bin/
+  copy:
+    remote_src: yes
+    mode: '0751'
+    src: ~/containerd/bin/*
+    dest: /bin/
+
+- name: Copy binaries to /usr/local/bin/
+  copy:
+    remote_src: yes
+    mode: '0751'
+    src: "{{ item }}"
+    dest: /usr/local/bin/
+  with_items:
+  - runc
+  - crictl-v{{ crictl_version }}-linux-amd64/crictl
+
+...

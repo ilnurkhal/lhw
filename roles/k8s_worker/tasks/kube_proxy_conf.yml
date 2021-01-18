@@ -1,0 +1,26 @@
+---
+- name: Copy kubeconfig
+  copy:
+    remote_src: yes
+    src: "kube-proxy.kubeconfig"
+    dest: "{{ kube_proxy_conf_dir }}/kubeconfig"
+  notify:
+  - restart kube-proxy
+
+- name: Rendering kube-proxy-config
+  template:
+    src: kube-proxy-config.yaml.j2
+    dest: "{{ kube_proxy_conf_dir }}/kube-proxy-config.yaml"
+  notify: 
+  - "restart kube-proxy"
+
+- name: Rendering kube-proxy.service
+  template:
+    src: kube-proxy.service.j2
+    dest: /etc/systemd/system/kube-proxy.service
+  notify:
+  - "daemon-reload"
+  - "enable kube-proxy" 
+  - "restart kube-proxy"
+
+...

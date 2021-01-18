@@ -1,0 +1,46 @@
+---
+- name: Copying ca
+  copy:
+    remote_src: yes
+    src: "{{ item }}"
+    dest: "{{ kubelet_ca_dir }}"
+  with_items:
+  - ca.pem
+  notify:
+  - restart worker
+
+- name: Copying certs
+  copy:
+    remote_src: yes
+    src: "{{ item }}"
+    dest: "{{ kubelet_conf_dir }}"
+  with_items:
+  - "{{ inventory_hostname }}-key.pem"
+  - "{{ inventory_hostname }}.pem"
+  notify:
+  - restart worker
+
+- name: Copy kubeconfig
+  copy:
+    remote_src: yes
+    src: "{{ inventory_hostname }.kubeconfig"
+    dest: "{{ kubelet_conf_dir }}/kubeconfig"
+  notify:
+  - restart kubelet
+
+- name: Rendering kubelet-config
+  template:
+    src: kubelet-config.yaml.j2
+    dest: "{{ kubelet_conf_dir }}/kubelet-config.yaml"
+  notify: 
+  - "restart kubelet"
+
+- name: Rendering kubelet.service
+  template:
+    src: kubelet.service.j2
+    dest: /etc/systemd/system/kubelet.service
+  notify:
+  - "daemon-reload"
+  - "enable kubelet" 
+  - "restart kubelet"
+...

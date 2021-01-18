@@ -1,0 +1,20 @@
+kind: KubeletConfiguration
+apiVersion: kubelet.config.k8s.io/v1beta1
+authentication:
+  anonymous:
+    enabled: false
+  webhook:
+    enabled: true
+  x509:
+    clientCAFile: "{{ kubelet_ca_dir }}/ca.pem"
+authorization:
+  mode: Webhook
+clusterDomain: "{{ cluster_name }}.local"
+clusterDNS:
+  - "10.32.0.10"
+# The CIDR to use for pod IP addresses, only used in standalone mode. In cluster mode, this is obtained from the master. For IPv6, the maximum number of IP's allocated is 65536 (DEPRECATED: This parameter should be set via the config file specified by the Kubelet's `--config` flag. See https://kubernetes.io/docs/tasks/administer-cluster/kubelet-config-file/ for more information.)
+# podCIDR: "${POD_CIDR}"
+resolvConf: "/run/systemd/resolve/resolv.conf"
+runtimeRequestTimeout: "15m"
+tlsCertFile: "/var/lib/kubelet/{{ inventory_hostname_short }}.pem"
+tlsPrivateKeyFile: "/var/lib/kubelet/{{ inventory_hostname_short }}-key.pem"

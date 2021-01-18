@@ -1,0 +1,10 @@
+---
+- name: Switch of the swap
+  command: "swapoff -a"
+
+- name: Remove swapfile from /etc/fstab
+  mount:
+    name: swap
+    fstype: swap
+    state: absent
+...

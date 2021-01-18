@@ -1,0 +1,33 @@
+---
+- name: "daemon-reload"
+  systemd:
+    daemon_reload: yes
+
+- name: "restart worker"
+  systemd:
+    name: "{{ item }}"
+    state: restarted
+  with_items:
+  - kube-apiserver.service
+  - kube-controller-manager.service
+  - kube-scheduler.service
+
+- name: "enable kubelet"
+  systemd:
+    name: kubelet.service
+    enabled: yes
+
+- name: "restart kubelet"
+  systemd:
+    name: kubelet.service
+    state: restarted
+
+- name: "enable kube-proxy"
+  systemd:
+    name: kube-proxy.service
+    enabled: yes
+
+- name: "restart kube-proxy"
+  systemd:
+    name: kube-proxy.service
+    state: restarted
