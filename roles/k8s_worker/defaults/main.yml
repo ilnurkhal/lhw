@@ -18,5 +18,7 @@ kube_proxy_conf_dir: /var/lib/kube-proxy
 kubelet_ca_dir: /var/lib/kubernetes
 
 cluster_name: hardway
+kubernetes_public_address: hardway
+
 kube_proxy_mode: ipvs
 cluster_cidr: 10.200.0.0/16
