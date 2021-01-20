@@ -45,8 +45,11 @@
 - name: Download runC
   unarchive:
     src: https://github.com/opencontainers/runc/releases/download/{{ runc_version }}/runc.amd64
-    dest: ~/runc
+    dest: ~/
     remote_src: yes
+
+- name: Rename file
+  command: mv ~/runc.amd64 runc
 
 #- name: Download CNI-Plugin
 #  unarchive:
@@ -74,7 +77,7 @@
     src: "{{ item }}"
     dest: /usr/local/bin/
   with_items:
-  - runc
+  - runc.amd64
   - crictl-v{{ crictl_version }}-linux-amd64/crictl
 
 ...
