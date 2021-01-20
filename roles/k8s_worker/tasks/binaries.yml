@@ -12,6 +12,7 @@
   - /var/lib/kubernetes
   - /var/run/kubernetes
   - /etc/containerd/
+  - /root/containerd/
 
 - name: Download kube-proxy
   when: use_kube_proxy
@@ -31,25 +32,27 @@
     - restart kubelet
 
 - name: Download cri-tools
-  get_url:
-    url: https://github.com/kubernetes-sigs/cri-tools/releases/download/v{{ crictl_version }}/crictl-v{{ crictl_version }}-linux-amd64.tar.gz 
-    dest: /usr/local/bin/
-    mode: '0751'
-
-- name: Download cri-tools
   unarchive:
     src: https://github.com/kubernetes-sigs/cri-tools/releases/download/v{{ crictl_version }}/crictl-v{{ crictl_version }}-linux-amd64.tar.gz 
-    dest: ~/
+    dest: /usr/local/bin/
+    extra_opts: [--strip-components=1]
+    mode: '0751'
     remote_src: yes
 
 - name: Download runC
-  unarchive:
-    src: https://github.com/opencontainers/runc/releases/download/{{ runc_version }}/runc.amd64
+  get_url:
+    url: https://github.com/opencontainers/runc/releases/download/{{ runc_version }}/runc.amd64
     dest: ~/
-    remote_src: yes
 
-- name: Rename file
-  command: mv ~/runc.amd64 runc
+- name: Copy binaries to /usr/local/bin/
+  copy:
+    remote_src: yes
+    mode: '0751'
+    src: runc.amd64
+    dest: /usr/local/bin/runc
+
+#- name: Rename file
+#  command: "mv ~/runc.amd64 runc"
 
 #- name: Download CNI-Plugin
 #  unarchive:
@@ -60,24 +63,10 @@
 - name: Download ContainerD
   unarchive:
     src: https://github.com/containerd/containerd/releases/download/v{{ containerd_version }}/containerd-{{ containerd_version }}-linux-amd64.tar.gz
-    dest: ~/containerd/
-    remote_src: yes
-
-- name: Copy containerd to /bin/
-  copy:
-    remote_src: yes
-    mode: '0751'
-    src: ~/containerd/bin/*
     dest: /bin/
-
-- name: Copy binaries to /usr/local/bin/
-  copy:
-    remote_src: yes
+    extra_opts: [--strip-components=1]
     mode: '0751'
-    src: "{{ item }}"
-    dest: /usr/local/bin/
-  with_items:
-  - runc.amd64
-  - crictl-v{{ crictl_version }}-linux-amd64/crictl
+    remote_src: yes
+
 
 ...
