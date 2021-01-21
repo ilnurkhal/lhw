@@ -17,5 +17,7 @@ expiry: 9000h
 # temp data dir
 tmp_data_dir:  /tmp/kubernetes-files
 
+kubernetes_public_address: hardway
+cluster_name: hardway
 # Cert hostnames of API
-kubernetes_hostnames: kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local
+kubernetes_hostnames: kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.{{cluster_name}},kubernetes.svc.{{cluster_name}}.local

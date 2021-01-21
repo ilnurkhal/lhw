@@ -23,7 +23,7 @@
 - name: Copy kubeconfig
   copy:
     remote_src: yes
-    src: "{{ inventory_hostname }.kubeconfig"
+    src: "{{ inventory_hostname }}.kubeconfig"
     dest: "{{ kubelet_conf_dir }}/kubeconfig"
   notify:
   - restart kubelet

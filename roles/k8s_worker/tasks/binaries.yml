@@ -31,6 +31,14 @@
   notify:
     - restart kubelet
 
+- name: Download cni-plugins
+  unarchive:
+    src: https://github.com/containernetworking/plugins/releases/download/v{{ cni_plugin_version }}/cni-plugins-linux-amd64-v{{ cni_plugin_version }}.tgz
+    dest: /opt/cni/bin/
+    extra_opts: [--strip-components=1]
+    mode: '0751'
+    remote_src: yes
+
 - name: Download cri-tools
   unarchive:
     src: https://github.com/kubernetes-sigs/cri-tools/releases/download/v{{ crictl_version }}/crictl-v{{ crictl_version }}-linux-amd64.tar.gz 

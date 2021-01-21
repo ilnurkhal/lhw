@@ -92,7 +92,7 @@
     cfssl gencert -ca={{ tmp_data_dir }}/ca.pem  
     -ca-key={{ tmp_data_dir }}/ca-key.pem 
     -config={{ tmp_data_dir }}/ca-config.json
-    -hostname={{kubernetes_hostnames}},127.0.0.1,10.32.0.1,{{ groups['all'] | list | join(',') }},{{ groups['etcd'] | map('extract', hostvars, ['ansible_host']) | join(',') }}
+    -hostname={{cluster_name}},{{kubernetes_public_address}},{{kubernetes_hostnames}},127.0.0.1,10.32.0.1,{{ groups['all'] | list | join(',') }},{{ groups['etcd'] | map('extract', hostvars, ['ansible_host']) | join(',') }}
     -profile=kubernetes {{ tmp_data_dir }}/kubernetes-csr.json | 
     cfssljson -bare {{ tmp_data_dir }}/kubernetes
 

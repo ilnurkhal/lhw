@@ -8,5 +8,6 @@
   - socat
   - conntrack
   - ipset
+  - ipvsadm
 
 ...
