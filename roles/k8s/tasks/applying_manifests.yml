@@ -1,17 +1,14 @@
 ---
 - name: Ensure that pip3 is installed
-  when: groups['k8s_control_plane'] is defined and inventory_hostname in groups['k8s_control_plane']
   package:
     name: python3-pip
     state: present
     
 - name: Ensure that k8s module is installed
-  when: groups['k8s_control_plane'] is defined and inventory_hostname in groups['k8s_control_plane']
   pip:
     name: openshift
 
 - name: Provide config for kubectl
-  when: groups['k8s_control_plane'] is defined and inventory_hostname in groups['k8s_control_plane']
   copy:
     remote_src: yes
     src: admin.kubeconfig

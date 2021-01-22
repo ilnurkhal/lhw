@@ -2,7 +2,6 @@
 # Control Plane
 
 - name: Generate The kube-controller-manager Kubernetes Configuration File
-  when: groups['k8s_control_plane'] is defined and inventory_hostname in groups['k8s_control_plane']
   shell: "{{ item }}"
   with_items:
   - kubectl config set-cluster {{ cluster_name }} --certificate-authority=ca.pem --embed-certs=true --server=https://127.0.0.1:6443 --kubeconfig=kube-controller-manager.kubeconfig
@@ -11,7 +10,6 @@
   - kubectl config use-context default --kubeconfig=kube-controller-manager.kubeconfig
 
 - name: Generate The kube-scheduler Kubernetes Configuration File
-  when: groups['k8s_control_plane'] is defined and inventory_hostname in groups['k8s_control_plane']
   shell: "{{ item }}"
   with_items:
   - kubectl config set-cluster {{ cluster_name }} --certificate-authority=ca.pem --embed-certs=true --server=https://127.0.0.1:6443 --kubeconfig=kube-scheduler.kubeconfig
@@ -20,7 +18,6 @@
   - kubectl config use-context default --kubeconfig=kube-scheduler.kubeconfig
 
 - name: Generate The admin Kubernetes Configuration File
-  when: groups['k8s_control_plane'] is defined and inventory_hostname in groups['k8s_control_plane']
   shell: "{{ item }}"
   with_items:
   - kubectl config set-cluster {{ cluster_name }} --certificate-authority=ca.pem --embed-certs=true --server=https://127.0.0.1:6443 --kubeconfig=admin.kubeconfig

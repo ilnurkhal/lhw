@@ -5,8 +5,15 @@
 - hosts: k8s_worker, k8s_control_plane
   roles:
   - k8s_certs
+- hosts: k8s_control_plane
+  roles:
+  - etcd
+- hosts: k8s_control_plane
+  serial: 1
+  roles:
   - etcd
   - k8s
 - hosts: k8s_worker
+  serial: 1
   roles:
   - k8s_worker

@@ -1,4 +1,9 @@
 ---
+- name: Rendering crictl config
+  template:
+    src: crictl.yaml.j2
+    dest: /etc/crictl.yaml
+
 - name: Rendering containerd config
   template:
     src: containerd.config.j2
