@@ -8,9 +8,8 @@
     name: "{{ item }}"
     state: restarted
   with_items:
-  - kube-apiserver.service
-  - kube-controller-manager.service
-  - kube-scheduler.service
+  - kubelet.service
+  - kube-proxy.service
 
 - name: "enable kubelet"
   systemd:
