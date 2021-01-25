@@ -93,6 +93,7 @@
     - restart scheduler
 
 - name: Download kube-apiserver
+  register: api_server
   get_url:
     url: https://storage.googleapis.com/kubernetes-release/release/v{{ kube_apiserver_version }}/bin/linux/amd64/kube-apiserver
     dest: /usr/local/bin/
@@ -104,9 +105,19 @@
   meta: flush_handlers
 
 - name: Wait before kube-api starts listen on 6443
+  when: api_server is changed
   wait_for:
     port: 6443
     delay: 20
     timeout: 100
+
+- name: Check api is up
+  uri:
+    url: "https://127.0.0.1:6443/healthz"
+    validate_certs: false
+  register: response
+  retries: 10
+  delay: 5
+  until: response.status == 200
 
 ...
