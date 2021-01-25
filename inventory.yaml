@@ -19,7 +19,9 @@ all:
     k8s_worker:
       hosts:
         k8sw-1:
+          ansible_host: 192.168.1.80
         k8sw-2:
+          ansible_host: 192.168.1.152
     k8s_balancer:
       hosts:
         hardway:

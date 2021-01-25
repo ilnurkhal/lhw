@@ -48,7 +48,7 @@
     -ca-key={{ tmp_data_dir }}/ca-key.pem 
     -config={{ tmp_data_dir }}/ca-config.json 
     -profile=kubernetes 
-    -hostname={{ item }} {{ tmp_data_dir }}/{{ item }}-csr.json | 
+    -hostname={{ item }},{{ item['ansible_host'] }} {{ tmp_data_dir }}/{{ item }}-csr.json | 
     cfssljson -bare {{ tmp_data_dir }}/{{ item }}
 
 - name: Generate The Controller Manager Client Certificate
