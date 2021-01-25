@@ -44,10 +44,8 @@ ExecStart=/usr/local/bin/kube-apiserver \
   --service-node-port-range={{ node_port_range }} \
   --tls-cert-file={{ control_plane_cert_and_context_dir }}/kubernetes.pem \
   --tls-private-key-file={{ control_plane_cert_and_context_dir }}/kubernetes-key.pem \
-
   --service-account-signing-key-file={{ control_plane_cert_and_context_dir }}/service-account-key.pem \
   --service-account-issuer=api \
-  
   --v=2
 Restart=on-failure
 RestartSec=5
