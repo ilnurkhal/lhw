@@ -7,6 +7,7 @@
   when: groups['k8s_worker'] is defined and inventory_hostname in groups['k8s_worker']
   with_items:
   - "ca.pem"
+  - "front-proxy-ca.pem"
   - "kube-proxy.pem"
   - "kube-proxy-key.pem" 
   - "{{ inventory_hostname }}-key.pem"
@@ -21,8 +22,12 @@
   with_items:
   - ca.pem
   - ca-key.pem
+  - front-proxy-ca.pem
+  - front-proxy-ca-key.pem
   - kubernetes-key.pem
   - kubernetes.pem
+  - front-proxy-client.pem
+  - front-proxy-client-key.pem
   - service-account-key.pem
   - service-account.pem
   - kube-controller-manager.pem

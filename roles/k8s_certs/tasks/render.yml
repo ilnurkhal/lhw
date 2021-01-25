@@ -14,7 +14,15 @@
     src: ca-csr.j2
     dest: "{{ tmp_data_dir }}/ca-csr.json"
   notify: "ca cert"
-  
+
+- name: render ca-requestheader-client-csr.json
+  run_once: True
+  local_action:
+    module: template
+    src: ca-requestheader-client-csr.j2
+    dest: "{{ tmp_data_dir }}/ca-requestheader-client-csr.json"
+  notify: "ca requestheader cert"
+
 - name: render ca-config.json
   run_once: True
   local_action:
@@ -62,7 +70,15 @@
     src: kubernetes-csr.j2
     dest: "{{ tmp_data_dir }}/kubernetes-csr.json"
   notify: Generate The Kubernetes API Server Certificate
-    
+
+- name: render front-proxy-client-csr.json
+  run_once: True
+  local_action:
+    module: template
+    src: front-proxy-client-csr.j2
+    dest: "{{ tmp_data_dir }}/front-proxy-client-csr.json"
+  notify: Generate The Front Proxy Client Certificate
+  
 - name: render The Kubelet Client csr
   run_once: True
   local_action:
@@ -71,7 +87,6 @@
     dest: "{{ tmp_data_dir }}/{{ item }}-csr.json"
   with_items: "{{ groups['k8s_worker'] }}"
   notify:
-    - Checking which certs should be generated
     - Generating The Kubelet Client Certificates
 
 - name: render service-account-csr.json

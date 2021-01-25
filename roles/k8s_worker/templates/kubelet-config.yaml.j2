@@ -9,7 +9,7 @@ authentication:
     clientCAFile: "{{ kubelet_ca_dir }}/ca.pem"
 authorization:
   mode: Webhook
-clusterDomain: "{{ cluster_name }}.local"
+clusterDomain: "{{ cluster_name }}"
 clusterDNS:
   - "10.32.0.10"
 resolvConf: "/run/systemd/resolve/resolv.conf"

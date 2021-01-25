@@ -6,6 +6,7 @@
     dest: "{{ kubelet_ca_dir }}"
   with_items:
   - ca.pem
+  - front-proxy-ca.pem
   notify:
   - restart worker
 
