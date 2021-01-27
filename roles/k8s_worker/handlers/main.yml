@@ -30,3 +30,13 @@
   systemd:
     name: kube-proxy.service
     state: restarted
+
+- name: reload haproxy
+  systemd:
+    name: haproxy
+    state: reloaded
+
+- name: enable haproxy
+  systemd:
+    name: haproxy
+    enabled: yes

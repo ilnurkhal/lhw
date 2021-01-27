@@ -1,6 +1,5 @@
 ---
 - name: Install loadbalancer for Kube-Api (haproxy)
-  when: groups['k8s_balancer'] is defined and inventory_hostname in groups['k8s_balancer']
   package:
     name: haproxy
     state: present
@@ -8,7 +7,6 @@
     - enable haproxy
 
 - name: Render haproxy config
-  when: groups['k8s_balancer'] is defined and inventory_hostname in groups['k8s_balancer']
   template:
     src: haproxy.cfg.j2
     dest: /etc/haproxy/haproxy.cfg

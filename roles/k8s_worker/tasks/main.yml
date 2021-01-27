@@ -1,4 +1,5 @@
 ---
+- include: haproxy.yml
 - include: kernel.yml
 - include: configs.yml
 - include: disable_swap.yml

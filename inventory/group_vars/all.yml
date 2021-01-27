@@ -1,0 +1,70 @@
+# Etcd
+etcd_version: 3.4.10
+etcd_datadir: /var/lib/etcd
+
+# k8s ControlPlane
+control_plane_cert_and_context_dir: /var/lib/kubernetes
+control_plane_conf_dir: /etc/kubernetes/config
+kube_apiserver_version: 1.20.1
+kube_controller_manager_version: 1.20.1
+kube_scheduler_version: 1.20.1
+
+audit_log_max_size: 100
+audit_log_maxbackup: 3
+audit_log_maxage: 30
+
+cluster_cidr: 10.200.0.0/16
+service_cluster_ip_range: 10.32.0.0/24
+node_port_range: 30000-32767
+event_ttl: 1h
+
+enabled_admission_plugins:
+  - NamespaceLifecycle
+  - NodeRestriction
+  - LimitRanger
+  - ServiceAccount
+  - DefaultStorageClass
+  - ResourceQuota
+
+
+kubectl_version: 1.20.0
+# kubectl
+kubernetes_public_address: hardway
+cluster_name: hardway
+etcd_encryption: true
+encryption_key: KgTD+3zMJDYfbusnNx+VdY3wSVembfu9MDgpJSmezzw=
+
+# defaults file for k8s_certs
+cfssl_version: 1.4.1
+cfssljson_version: 1.4.1
+
+# Cert data
+C: RU
+L: Ekaterinburg
+ST: Ekaterinburg
+algo: rsa
+size: 2048
+expiry: 9900h
+
+# temp data dir for certs
+tmp_data_dir:  /tmp/kubernetes-files
+
+# Cert hostnames of API
+kubernetes_hostnames: kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.{{cluster_name}},kubernetes.svc.{{cluster_name}}.local
+
+# defaults file for k8s_worker
+kube_proxy_version: 1.20.1
+kubelet_version: 1.20.1
+use_kube_proxy: false
+containerd_version: 1.3.6
+runc_version: v1.0.0-rc91
+
+crictl_version: 1.18.0
+
+
+kubelet_conf_dir: /var/lib/kubelet
+kube_proxy_conf_dir: /var/lib/kube-proxy
+kubelet_ca_dir: /var/lib/kubernetes
+
+
+kube_proxy_mode: ipvs

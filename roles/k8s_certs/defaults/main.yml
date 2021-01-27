@@ -4,11 +4,9 @@ cfssl_version: 1.4.1
 cfssljson_version: 1.4.1
 
 # Cert data
-CN: Kubernetes
+
 C: RU
 L: Ekaterinburg
-O: Kubernetes
-OU: CA
 ST: Ekaterinburg
 algo: rsa
 size: 2048

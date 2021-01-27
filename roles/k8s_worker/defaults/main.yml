@@ -10,8 +10,6 @@ runc_version: v1.0.0-rc91
 
 crictl_version: 1.18.0
 
-cni_plugin_version: 0.8.6
-
 kubelet_conf_dir: /var/lib/kubelet
 kube_proxy_conf_dir: /var/lib/kube-proxy
 kubelet_ca_dir: /var/lib/kubernetes

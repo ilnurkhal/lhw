@@ -27,5 +27,5 @@ enabled_admission_plugins:
 kubectl_version: 1.20.0
 kubernetes_public_address: hardway
 cluster_name: hardway
-etcd_encryption: true
+etcd_encryption: false
 encryption_key: KgTD+3zMJDYfbusnNx+VdY3wSVembfu9MDgpJSmezzw=

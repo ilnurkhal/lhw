@@ -18,7 +18,7 @@ global
     ssl-default-bind-options ssl-min-ver TLSv1.2 no-tls-tickets
 
 frontend hardway
-    bind *:6443
+    bind 127.0.0.1:6443
     mode tcp
     default_backend kubernetes
 
