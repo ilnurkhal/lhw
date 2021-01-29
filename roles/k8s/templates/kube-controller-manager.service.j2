@@ -5,7 +5,6 @@ Documentation=https://github.com/kubernetes/kubernetes
 [Service]
 ExecStart=/usr/local/bin/kube-controller-manager \
   --bind-address=0.0.0.0 \
-  --cluster-cidr={{ cluster_cidr }} \
   --cluster-name={{ cluster_name }} \
   --cluster-signing-cert-file={{ control_plane_cert_and_context_dir }}/ca.pem \
   --cluster-signing-key-file={{ control_plane_cert_and_context_dir }}/ca-key.pem \

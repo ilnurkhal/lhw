@@ -2,7 +2,7 @@
 - name: Generate CA cert
   listen: "ca cert"
   run_once: True
-  delegate_to: 127.0.0.1
+  delegate_to: "{{ certgen_host }}"
   shell: > 
     cfssl gencert -initca {{ tmp_data_dir }}/ca-csr.json | 
     cfssljson -bare {{ tmp_data_dir }}/ca
@@ -10,7 +10,7 @@
 - name: Generate CA requestheader-client cert
   listen: "ca requestheader cert"
   run_once: True
-  delegate_to: 127.0.0.1
+  delegate_to: "{{ certgen_host }}"
   shell: > 
     cfssl gencert -initca {{ tmp_data_dir }}/ca-requestheader-client-csr.json | 
     cfssljson -bare {{ tmp_data_dir }}/front-proxy-ca
@@ -18,7 +18,7 @@
 - name: Generate The Admin Client Certificate
   listen: "ca cert"
   run_once: True
-  delegate_to: 127.0.0.1
+  delegate_to: "{{ certgen_host }}"
   shell: > 
     cfssl gencert -ca={{ tmp_data_dir }}/ca.pem 
     -ca-key={{ tmp_data_dir }}/ca-key.pem 
@@ -28,7 +28,7 @@
 
 - name: Generating The Kubelet Client Certificates
   listen: "ca cert"
-  delegate_to: 127.0.0.1
+  delegate_to: "{{ certgen_host }}"
   run_once: True
   with_items: "{{ groups['k8s_worker'] }}"
   shell: >
@@ -42,7 +42,7 @@
 - name: Generate The Controller Manager Client Certificate
   listen: "ca cert"
   run_once: True
-  delegate_to: 127.0.0.1
+  delegate_to: "{{ certgen_host }}"
   shell: >
     cfssl gencert -ca={{ tmp_data_dir }}/ca.pem 
     -ca-key={{ tmp_data_dir }}/ca-key.pem 
@@ -53,7 +53,7 @@
 - name: Generate The Kube Proxy Client Certificate
   listen: "ca cert"
   run_once: True
-  delegate_to: 127.0.0.1
+  delegate_to: "{{ certgen_host }}"
   shell: >
     cfssl gencert -ca={{ tmp_data_dir }}/ca.pem 
     -ca-key={{ tmp_data_dir }}/ca-key.pem 
@@ -64,7 +64,7 @@
 - name: Generate The Scheduler Client Certificate
   listen: "ca cert"
   run_once: True
-  delegate_to: 127.0.0.1
+  delegate_to: "{{ certgen_host }}"
   shell: > 
     cfssl gencert -ca={{ tmp_data_dir }}/ca.pem 
     -ca-key={{ tmp_data_dir }}/ca-key.pem 
@@ -75,7 +75,7 @@
 - name: Generate The Kubernetes API Server Certificate
   listen: "ca cert"
   run_once: True
-  delegate_to: 127.0.0.1
+  delegate_to: "{{ certgen_host }}"
   shell: > 
     cfssl gencert -ca={{ tmp_data_dir }}/ca.pem  
     -ca-key={{ tmp_data_dir }}/ca-key.pem 
@@ -87,7 +87,7 @@
 - name: Generate The Front Proxy Client Certificate
   listen: "ca requestheader cert"
   run_once: True
-  delegate_to: 127.0.0.1
+  delegate_to: "{{ certgen_host }}"
   shell: > 
     cfssl gencert -ca={{ tmp_data_dir }}/front-proxy-ca.pem  
     -ca-key={{ tmp_data_dir }}/front-proxy-ca-key.pem 
@@ -98,7 +98,7 @@
 - name: Generate The Kubernetes Service Account Certificate
   listen: "ca cert"
   run_once: True
-  delegate_to: 127.0.0.1
+  delegate_to: "{{ certgen_host }}"
   shell: > 
     cfssl gencert -ca={{ tmp_data_dir }}/ca.pem 
     -ca-key={{ tmp_data_dir }}/ca-key.pem 

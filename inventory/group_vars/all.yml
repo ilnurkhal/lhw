@@ -13,7 +13,6 @@ audit_log_max_size: 100
 audit_log_maxbackup: 3
 audit_log_maxage: 30
 
-cluster_cidr: 10.200.0.0/16
 service_cluster_ip_range: 10.32.0.0/24
 node_port_range: 30000-32767
 event_ttl: 1h
@@ -31,8 +30,8 @@ kubectl_version: 1.20.0
 # kubectl
 kubernetes_public_address: hardway
 cluster_name: hardway
-etcd_encryption: true
-encryption_key: KgTD+3zMJDYfbusnNx+VdY3wSVembfu9MDgpJSmezzw=
+etcd_encryption: false
+encryption_key: KgTD+3zMJDYfbusnNx+VdY3wSVembfu9MDgpJSmezzw= # TODO: Should be a secret
 
 # defaults file for k8s_certs
 cfssl_version: 1.4.1
@@ -48,6 +47,7 @@ expiry: 9900h
 
 # temp data dir for certs
 tmp_data_dir:  /tmp/kubernetes-files
+certgen_host: 
 
 # Cert hostnames of API
 kubernetes_hostnames: kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.{{cluster_name}},kubernetes.svc.{{cluster_name}}.local

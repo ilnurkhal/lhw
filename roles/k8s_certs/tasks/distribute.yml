@@ -1,5 +1,6 @@
 ---
 - name: Distribute workers Certificates
+  delegate_to: "{{ certgen_host }}"
   copy:
     src: "{{ tmp_data_dir }}/{{ item }}"
     dest: ~/
@@ -14,6 +15,7 @@
   - "{{ inventory_hostname }}.pem"
 
 - name: Distribute controlplane Certificates
+  delegate_to: "{{ certgen_host }}"
   copy:
     src: "{{ tmp_data_dir }}/{{ item }}"
     dest: ~/
