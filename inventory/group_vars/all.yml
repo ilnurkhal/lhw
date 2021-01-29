@@ -47,7 +47,7 @@ expiry: 9900h
 
 # temp data dir for certs
 tmp_data_dir:  /tmp/kubernetes-files
-certgen_host: 
+certgen_host: k8sm-1
 
 # Cert hostnames of API
 kubernetes_hostnames: kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.{{cluster_name}},kubernetes.svc.{{cluster_name}}.local

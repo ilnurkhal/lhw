@@ -1,28 +1,6 @@
 ---
-- name: Check cfssl exists
-  stat:
-    path: /usr/local/bin/cfssl
-  register: cfssl_exist
-
-- name: Check cfssljson exists
-  stat:
-    path: /usr/local/bin/cfssljson
-  register: cfssljson_exist
-
-- name: Download cfssl
-  when: not cfssl_exist.stat.exists
-  local_action:
-    module: get_url
-    url: https://storage.googleapis.com/kubernetes-the-hard-way/cfssl/{{ cfssl_version }}/linux/cfssl
-    dest: /usr/local/bin/
-    mode: '0751'
-
-- name: Download cfssljson
-  when: not cfssljson_exist.stat.exists
-  local_action:
-    module: get_url
-    url: https://storage.googleapis.com/kubernetes-the-hard-way/cfssl/{{ cfssljson_version }}/linux/cfssljson
-    dest: /usr/local/bin/
-    mode: '0751'
-
+- name: Install cfssl
+  package:
+    name: golang-cfssl
+    state: present
 ...
