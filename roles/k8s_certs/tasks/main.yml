@@ -1,5 +1,6 @@
 ---
 # tasks file for k8s_certs
+# https://kubernetes.io/docs/tasks/tls/manual-rotation-of-ca-certificates/
 - include: tools.yml
 - include: render.yml
 - include: distribute.yml

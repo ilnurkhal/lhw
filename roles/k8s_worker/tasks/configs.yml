@@ -3,8 +3,8 @@
   when: groups['k8s_worker'] is defined and inventory_hostname in groups['k8s_worker']
   shell: "{{ item }}"
   with_items: 
-  - kubectl config set-cluster {{ cluster_name }} --certificate-authority=ca.pem --embed-certs=true --server=https://127.0.0.1:6443 --kubeconfig={{ inventory_hostname_short }}.kubeconfig
-  - kubectl config set-credentials system:node:{{ inventory_hostname_short }} --client-certificate={{ inventory_hostname_short }}.pem --client-key={{ inventory_hostname_short }}-key.pem --embed-certs=true --kubeconfig={{ inventory_hostname_short }}.kubeconfig
+  - kubectl config set-cluster {{ cluster_name }} --certificate-authority={{cert_dir}}/ca.pem --embed-certs=true --server=https://127.0.0.1:6443 --kubeconfig={{ inventory_hostname_short }}.kubeconfig
+  - kubectl config set-credentials system:node:{{ inventory_hostname_short }} --client-certificate={{cert_dir}}/{{ inventory_hostname_short }}.pem --client-key={{cert_dir}}/{{ inventory_hostname_short }}-key.pem --embed-certs=true --kubeconfig={{ inventory_hostname_short }}.kubeconfig
   - kubectl config set-context default --cluster={{ cluster_name }} --user=system:node:{{ inventory_hostname_short }} --kubeconfig={{ inventory_hostname_short }}.kubeconfig
   - kubectl config use-context default --kubeconfig={{ inventory_hostname_short }}.kubeconfig     
 
@@ -12,8 +12,8 @@
   when: groups['k8s_worker'] is defined and inventory_hostname in groups['k8s_worker']
   shell: "{{ item }}"
   with_items:
-  - kubectl config set-cluster {{ cluster_name }} --certificate-authority=ca.pem --embed-certs=true --server=https://127.0.0.1:6443 --kubeconfig=kube-proxy.kubeconfig
-  - kubectl config set-credentials system:kube-proxy --client-certificate=kube-proxy.pem --client-key=kube-proxy-key.pem --embed-certs=true --kubeconfig=kube-proxy.kubeconfig
+  - kubectl config set-cluster {{ cluster_name }} --certificate-authority={{cert_dir}}/ca.pem --embed-certs=true --server=https://127.0.0.1:6443 --kubeconfig=kube-proxy.kubeconfig
+  - kubectl config set-credentials system:kube-proxy --client-certificate={{cert_dir}}/kube-proxy.pem --client-key={{cert_dir}}/kube-proxy-key.pem --embed-certs=true --kubeconfig=kube-proxy.kubeconfig
   - kubectl config set-context default --cluster={{ cluster_name }} --user=system:kube-proxy --kubeconfig=kube-proxy.kubeconfig
   - kubectl config use-context default --kubeconfig=kube-proxy.kubeconfig
 ...

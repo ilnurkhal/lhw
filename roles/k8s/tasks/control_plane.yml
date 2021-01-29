@@ -16,25 +16,6 @@
   notify:
     - restart control plane
 
-- name: Copying certs
-  copy:
-    remote_src: yes
-    src: "{{ item }}"
-    dest: "{{ control_plane_cert_and_context_dir }}"
-  with_items:
-  - ca.pem
-  - ca-key.pem
-  - front-proxy-ca.pem
-  - front-proxy-ca-key.pem
-  - kubernetes-key.pem
-  - kubernetes.pem
-  - front-proxy-client.pem
-  - front-proxy-client-key.pem
-  - service-account-key.pem
-  - service-account.pem
-  notify:
-    - restart control plane
-
 - name: Copy manifests
   copy:
     remote_src: yes

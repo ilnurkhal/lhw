@@ -13,7 +13,7 @@ size: 2048
 expiry: 9900h
 
 # temp data dir
-tmp_data_dir:  /tmp/kubernetes-files
+cert_dir:  /etc/kubernetes/ssl
 
 kubernetes_public_address: hardway
 cluster_name: hardway

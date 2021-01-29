@@ -1,9 +1,7 @@
 ---
 - name: Create a temp directory if it does not exist
-  run_once: True
-  delegate_to: "{{ certgen_host }}"
   file:
-    path: "{{ tmp_data_dir }}"
+    path: "{{ cert_dir }}"
     state: directory
     mode: '0755'
 
@@ -12,7 +10,7 @@
   delegate_to: "{{ certgen_host }}"
   template:
     src: ca-csr.j2
-    dest: "{{ tmp_data_dir }}/ca-csr.json"
+    dest: "{{ cert_dir }}/ca-csr.json"
   notify: "ca cert"
 
 - name: render ca-requestheader-client-csr.json
@@ -20,7 +18,7 @@
   delegate_to: "{{ certgen_host }}"
   template:
     src: ca-requestheader-client-csr.j2
-    dest: "{{ tmp_data_dir }}/ca-requestheader-client-csr.json"
+    dest: "{{ cert_dir }}/ca-requestheader-client-csr.json"
   notify: "ca requestheader cert"
 
 - name: render ca-config.json
@@ -28,7 +26,7 @@
   delegate_to: "{{ certgen_host }}"
   template:
     src: ca-config.j2
-    dest: "{{ tmp_data_dir }}/ca-config.json"
+    dest: "{{ cert_dir }}/ca-config.json"
   notify: "ca cert"
 
 - name: render admin-csr.json
@@ -36,7 +34,7 @@
   delegate_to: "{{ certgen_host }}"
   template:
     src: admin-csr.j2
-    dest: "{{ tmp_data_dir }}/admin-csr.json"
+    dest: "{{ cert_dir }}/admin-csr.json"
   notify: Generate The Admin Client Certificate
 
 - name: render kube-controller-manager-csr.json
@@ -44,7 +42,7 @@
   delegate_to: "{{ certgen_host }}"
   template:
     src: kube-controller-manager-csr.j2
-    dest: "{{ tmp_data_dir }}/kube-controller-manager-csr.json"
+    dest: "{{ cert_dir }}/kube-controller-manager-csr.json"
   notify: Generate The Controller Manager Client Certificate
 
 - name: render kube-proxy-csr.json
@@ -52,7 +50,7 @@
   delegate_to: "{{ certgen_host }}"
   template:
     src: kube-proxy-csr.j2
-    dest: "{{ tmp_data_dir }}/kube-proxy-csr.json"
+    dest: "{{ cert_dir }}/kube-proxy-csr.json"
   notify: Generate The Kube Proxy Client Certificate
 
 - name: render kube-scheduler-csr.json
@@ -60,7 +58,7 @@
   delegate_to: "{{ certgen_host }}"
   template:
     src: kube-scheduler-csr.j2
-    dest: "{{ tmp_data_dir }}/kube-scheduler-csr.json"
+    dest: "{{ cert_dir }}/kube-scheduler-csr.json"
   notify: Generate The Scheduler Client Certificate
 
 - name: render kubernetes-csr.json
@@ -68,7 +66,7 @@
   delegate_to: "{{ certgen_host }}"
   template:
     src: kubernetes-csr.j2
-    dest: "{{ tmp_data_dir }}/kubernetes-csr.json"
+    dest: "{{ cert_dir }}/kubernetes-csr.json"
   notify: Generate The Kubernetes API Server Certificate
 
 - name: render front-proxy-client-csr.json
@@ -76,7 +74,7 @@
   delegate_to: "{{ certgen_host }}"
   template:
     src: front-proxy-client-csr.j2
-    dest: "{{ tmp_data_dir }}/front-proxy-client-csr.json"
+    dest: "{{ cert_dir }}/front-proxy-client-csr.json"
   notify: Generate The Front Proxy Client Certificate
   
 - name: render The Kubelet Client csr
@@ -84,7 +82,7 @@
   delegate_to: "{{ certgen_host }}"
   template:
     src: instance-csr.j2
-    dest: "{{ tmp_data_dir }}/{{ item }}-csr.json"
+    dest: "{{ cert_dir }}/{{ item }}-csr.json"
   with_items: "{{ groups['k8s_worker'] }}"
   notify:
     - Generating The Kubelet Client Certificates
@@ -94,7 +92,7 @@
   delegate_to: "{{ certgen_host }}"
   template:
     src: service-account-csr.j2
-    dest: "{{ tmp_data_dir }}/service-account-csr.json"
+    dest: "{{ cert_dir }}/service-account-csr.json"
   notify: Generate The Kubernetes Service Account Certificate
 
 - name: Force all notified handlers to run at this point, not waiting for normal sync points

@@ -12,7 +12,6 @@ crictl_version: 1.18.0
 
 kubelet_conf_dir: /var/lib/kubelet
 kube_proxy_conf_dir: /var/lib/kube-proxy
-kubelet_ca_dir: /var/lib/kubernetes
 
 cluster_name: hardway
 kubernetes_public_address: hardway

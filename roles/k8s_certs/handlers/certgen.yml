@@ -4,27 +4,27 @@
   run_once: True
   delegate_to: "{{ certgen_host }}"
   shell: > 
-    cfssl gencert -initca {{ tmp_data_dir }}/ca-csr.json | 
-    cfssljson -bare {{ tmp_data_dir }}/ca
+    cfssl gencert -initca {{ cert_dir }}/ca-csr.json | 
+    cfssljson -bare {{ cert_dir }}/ca
 
 - name: Generate CA requestheader-client cert
   listen: "ca requestheader cert"
   run_once: True
   delegate_to: "{{ certgen_host }}"
   shell: > 
-    cfssl gencert -initca {{ tmp_data_dir }}/ca-requestheader-client-csr.json | 
-    cfssljson -bare {{ tmp_data_dir }}/front-proxy-ca
+    cfssl gencert -initca {{ cert_dir }}/ca-requestheader-client-csr.json | 
+    cfssljson -bare {{ cert_dir }}/front-proxy-ca
 
 - name: Generate The Admin Client Certificate
   listen: "ca cert"
   run_once: True
   delegate_to: "{{ certgen_host }}"
   shell: > 
-    cfssl gencert -ca={{ tmp_data_dir }}/ca.pem 
-    -ca-key={{ tmp_data_dir }}/ca-key.pem 
-    -config={{ tmp_data_dir }}/ca-config.json 
-    -profile=kubernetes  {{ tmp_data_dir }}/admin-csr.json | 
-    cfssljson -bare {{ tmp_data_dir }}/admin
+    cfssl gencert -ca={{ cert_dir }}/ca.pem 
+    -ca-key={{ cert_dir }}/ca-key.pem 
+    -config={{ cert_dir }}/ca-config.json 
+    -profile=kubernetes  {{ cert_dir }}/admin-csr.json | 
+    cfssljson -bare {{ cert_dir }}/admin
 
 - name: Generating The Kubelet Client Certificates
   listen: "ca cert"
@@ -32,77 +32,77 @@
   run_once: True
   with_items: "{{ groups['k8s_worker'] }}"
   shell: >
-    cfssl gencert -ca={{ tmp_data_dir }}/ca.pem 
-    -ca-key={{ tmp_data_dir }}/ca-key.pem 
-    -config={{ tmp_data_dir }}/ca-config.json 
+    cfssl gencert -ca={{ cert_dir }}/ca.pem 
+    -ca-key={{ cert_dir }}/ca-key.pem 
+    -config={{ cert_dir }}/ca-config.json 
     -profile=kubernetes 
-    -hostname={{ item }},{{ hostvars[item]['ansible_host'] }} {{ tmp_data_dir }}/{{ item }}-csr.json | 
-    cfssljson -bare {{ tmp_data_dir }}/{{ item }}
+    -hostname={{ item }},{{ hostvars[item]['ansible_host'] }} {{ cert_dir }}/{{ item }}-csr.json | 
+    cfssljson -bare {{ cert_dir }}/{{ item }}
 
 - name: Generate The Controller Manager Client Certificate
   listen: "ca cert"
   run_once: True
   delegate_to: "{{ certgen_host }}"
   shell: >
-    cfssl gencert -ca={{ tmp_data_dir }}/ca.pem 
-    -ca-key={{ tmp_data_dir }}/ca-key.pem 
-    -config={{ tmp_data_dir }}/ca-config.json 
-    -profile=kubernetes {{ tmp_data_dir }}/kube-controller-manager-csr.json | 
-    cfssljson -bare {{ tmp_data_dir }}/kube-controller-manager
+    cfssl gencert -ca={{ cert_dir }}/ca.pem 
+    -ca-key={{ cert_dir }}/ca-key.pem 
+    -config={{ cert_dir }}/ca-config.json 
+    -profile=kubernetes {{ cert_dir }}/kube-controller-manager-csr.json | 
+    cfssljson -bare {{ cert_dir }}/kube-controller-manager
 
 - name: Generate The Kube Proxy Client Certificate
   listen: "ca cert"
   run_once: True
   delegate_to: "{{ certgen_host }}"
   shell: >
-    cfssl gencert -ca={{ tmp_data_dir }}/ca.pem 
-    -ca-key={{ tmp_data_dir }}/ca-key.pem 
-    -config={{ tmp_data_dir }}/ca-config.json 
-    -profile=kubernetes {{ tmp_data_dir }}/kube-proxy-csr.json | 
-    cfssljson -bare {{ tmp_data_dir }}/kube-proxy
+    cfssl gencert -ca={{ cert_dir }}/ca.pem 
+    -ca-key={{ cert_dir }}/ca-key.pem 
+    -config={{ cert_dir }}/ca-config.json 
+    -profile=kubernetes {{ cert_dir }}/kube-proxy-csr.json | 
+    cfssljson -bare {{ cert_dir }}/kube-proxy
 
 - name: Generate The Scheduler Client Certificate
   listen: "ca cert"
   run_once: True
   delegate_to: "{{ certgen_host }}"
   shell: > 
-    cfssl gencert -ca={{ tmp_data_dir }}/ca.pem 
-    -ca-key={{ tmp_data_dir }}/ca-key.pem 
-    -config={{ tmp_data_dir }}/ca-config.json 
-    -profile=kubernetes {{ tmp_data_dir }}/kube-scheduler-csr.json | 
-    cfssljson -bare {{ tmp_data_dir }}/kube-scheduler
+    cfssl gencert -ca={{ cert_dir }}/ca.pem 
+    -ca-key={{ cert_dir }}/ca-key.pem 
+    -config={{ cert_dir }}/ca-config.json 
+    -profile=kubernetes {{ cert_dir }}/kube-scheduler-csr.json | 
+    cfssljson -bare {{ cert_dir }}/kube-scheduler
 
 - name: Generate The Kubernetes API Server Certificate
   listen: "ca cert"
   run_once: True
   delegate_to: "{{ certgen_host }}"
   shell: > 
-    cfssl gencert -ca={{ tmp_data_dir }}/ca.pem  
-    -ca-key={{ tmp_data_dir }}/ca-key.pem 
-    -config={{ tmp_data_dir }}/ca-config.json
+    cfssl gencert -ca={{ cert_dir }}/ca.pem  
+    -ca-key={{ cert_dir }}/ca-key.pem 
+    -config={{ cert_dir }}/ca-config.json
     -hostname={{cluster_name}},{{kubernetes_public_address}},{{kubernetes_hostnames}},127.0.0.1,10.32.0.1,{{ groups['all'] | list | join(',') }},{{ groups['etcd'] | map('extract', hostvars, ['ansible_host']) | join(',') }}
-    -profile=kubernetes {{ tmp_data_dir }}/kubernetes-csr.json | 
-    cfssljson -bare {{ tmp_data_dir }}/kubernetes
+    -profile=kubernetes {{ cert_dir }}/kubernetes-csr.json | 
+    cfssljson -bare {{ cert_dir }}/kubernetes
 
 - name: Generate The Front Proxy Client Certificate
   listen: "ca requestheader cert"
   run_once: True
   delegate_to: "{{ certgen_host }}"
   shell: > 
-    cfssl gencert -ca={{ tmp_data_dir }}/front-proxy-ca.pem  
-    -ca-key={{ tmp_data_dir }}/front-proxy-ca-key.pem 
-    -config={{ tmp_data_dir }}/ca-config.json
-    -profile=kubernetes {{ tmp_data_dir }}/front-proxy-client-csr.json | 
-    cfssljson -bare {{ tmp_data_dir }}/front-proxy-client
+    cfssl gencert -ca={{ cert_dir }}/front-proxy-ca.pem  
+    -ca-key={{ cert_dir }}/front-proxy-ca-key.pem 
+    -config={{ cert_dir }}/ca-config.json
+    -profile=kubernetes {{ cert_dir }}/front-proxy-client-csr.json | 
+    cfssljson -bare {{ cert_dir }}/front-proxy-client
 
 - name: Generate The Kubernetes Service Account Certificate
   listen: "ca cert"
   run_once: True
   delegate_to: "{{ certgen_host }}"
   shell: > 
-    cfssl gencert -ca={{ tmp_data_dir }}/ca.pem 
-    -ca-key={{ tmp_data_dir }}/ca-key.pem 
-    -config={{ tmp_data_dir }}/ca-config.json 
-    -profile=kubernetes {{ tmp_data_dir }}/service-account-csr.json | 
-    cfssljson -bare {{ tmp_data_dir }}/service-account
+    cfssl gencert -ca={{ cert_dir }}/ca.pem 
+    -ca-key={{ cert_dir }}/ca-key.pem 
+    -config={{ cert_dir }}/ca-config.json 
+    -profile=kubernetes {{ cert_dir }}/service-account-csr.json | 
+    cfssljson -bare {{ cert_dir }}/service-account
 ...

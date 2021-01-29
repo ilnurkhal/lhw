@@ -6,7 +6,7 @@ authentication:
   webhook:
     enabled: true
   x509:
-    clientCAFile: "{{ kubelet_ca_dir }}/ca.pem"
+    clientCAFile: "{{cert_dir}}/ca.pem"
 authorization:
   mode: Webhook
 clusterDomain: "{{ cluster_name }}"
@@ -14,5 +14,5 @@ clusterDNS:
   - "10.32.0.10"
 resolvConf: "/run/systemd/resolve/resolv.conf"
 runtimeRequestTimeout: "15m"
-tlsCertFile: "/var/lib/kubelet/{{ inventory_hostname_short }}.pem"
-tlsPrivateKeyFile: "/var/lib/kubelet/{{ inventory_hostname_short }}-key.pem"
+tlsCertFile: "{{cert_dir}}/{{ inventory_hostname_short }}.pem"
+tlsPrivateKeyFile: "{{cert_dir}}/{{ inventory_hostname_short }}-key.pem"

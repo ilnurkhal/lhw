@@ -1,26 +1,4 @@
 ---
-- name: Copying ca
-  copy:
-    remote_src: yes
-    src: "{{ item }}"
-    dest: "{{ kubelet_ca_dir }}"
-  with_items:
-  - ca.pem
-  - front-proxy-ca.pem
-  notify:
-  - restart worker
-
-- name: Copying certs
-  copy:
-    remote_src: yes
-    src: "{{ item }}"
-    dest: "{{ kubelet_conf_dir }}"
-  with_items:
-  - "{{ inventory_hostname }}-key.pem"
-  - "{{ inventory_hostname }}.pem"
-  notify:
-  - restart worker
-
 - name: Copy kubeconfig
   copy:
     remote_src: yes

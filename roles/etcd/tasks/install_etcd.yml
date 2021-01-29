@@ -9,19 +9,6 @@
   - /etc/etcd
   - "{{ etcd_datadir }}"
 
-- name: Copy certs
-  copy:
-    remote_src: yes
-    src: "{{ item }}"
-    dest: /etc/etcd/
-  with_items:
-  - ca.pem
-  - kubernetes-key.pem
-  - kubernetes.pem
-  notify:
-  - "restart etcd"
-  when: groups['etcd'] is defined and inventory_hostname in groups['etcd']
-
 - name: Download and unarchive etcd
   when: groups['etcd'] is defined and inventory_hostname in groups['etcd']
   unarchive:

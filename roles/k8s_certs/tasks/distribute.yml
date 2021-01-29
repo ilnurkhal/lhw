@@ -1,10 +1,9 @@
 ---
 - name: Distribute workers Certificates
   delegate_to: "{{ certgen_host }}"
-  copy:
-    src: "{{ tmp_data_dir }}/{{ item }}"
-    dest: ~/
-    remote_src: no
+  synchronize:
+    src: "{{ cert_dir }}/{{ item }}"
+    dest: "{{ cert_dir }}"
   when: groups['k8s_worker'] is defined and inventory_hostname in groups['k8s_worker']
   with_items:
   - "ca.pem"
@@ -16,10 +15,9 @@
 
 - name: Distribute controlplane Certificates
   delegate_to: "{{ certgen_host }}"
-  copy:
-    src: "{{ tmp_data_dir }}/{{ item }}"
-    dest: ~/
-    remote_src: no
+  synchronize:
+    src: "{{ cert_dir }}/{{ item }}"
+    dest: "{{ cert_dir }}"
   when: groups['k8s_control_plane'] is defined and inventory_hostname in groups['k8s_control_plane']
   with_items:
   - ca.pem

@@ -1,16 +1,19 @@
 ---
 - hosts: k8s_worker, k8s_control_plane
+  tags: cert
   roles:
   - k8s_certs
-- hosts: k8s_control_plane
+- hosts: etcd
+  tags: etcd
   roles:
   - etcd
 - hosts: k8s_control_plane
   serial: 1
+  tags: control_plane
   roles:
-  - etcd
   - k8s
 - hosts: k8s_worker
   serial: 1
+  tags: worker
   roles:
   - k8s_worker

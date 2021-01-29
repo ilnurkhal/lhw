@@ -30,7 +30,7 @@ kubectl_version: 1.20.0
 # kubectl
 kubernetes_public_address: hardway
 cluster_name: hardway
-etcd_encryption: false
+etcd_encryption: true
 encryption_key: KgTD+3zMJDYfbusnNx+VdY3wSVembfu9MDgpJSmezzw= # TODO: Should be a secret
 
 # defaults file for k8s_certs
@@ -45,8 +45,8 @@ algo: rsa
 size: 2048
 expiry: 9900h
 
-# temp data dir for certs
-tmp_data_dir:  /tmp/kubernetes-files
+# dir for certs
+cert_dir:  /etc/kubernetes/ssl
 certgen_host: k8sm-1
 
 # Cert hostnames of API
