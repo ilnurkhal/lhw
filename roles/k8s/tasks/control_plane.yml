@@ -7,6 +7,7 @@
   with_items:
   - "{{ control_plane_cert_and_context_dir }}"
   - "{{ control_plane_conf_dir }}"
+  - /root/.kube
 
 - name: render encryption-config.yaml
   when: etcd_encryption

@@ -1,4 +1,10 @@
 ---
+- name: Download kubectl
+  get_url:
+    url: https://storage.googleapis.com/kubernetes-release/release/v{{ kubectl_version }}/bin/linux/amd64/kubectl
+    dest: /usr/local/bin/
+    mode: '0751'
+    
 - name: Generate The kubelet Kubernetes Configuration File
   when: groups['k8s_worker'] is defined and inventory_hostname in groups['k8s_worker']
   shell: "{{ item }}"

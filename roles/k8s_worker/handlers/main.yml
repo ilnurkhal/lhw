@@ -40,3 +40,13 @@
   systemd:
     name: haproxy
     enabled: yes
+
+- name: "restart containerd"
+  systemd:
+    name: containerd.service
+    state: restarted
+
+- name: "enable containerd"
+  systemd:
+    name: containerd.service
+    enabled: yes
