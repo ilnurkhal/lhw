@@ -27,8 +27,9 @@ enabled_admission_plugins:
 
 kubectl_version: 1.20.0
 # kubectl
-kubernetes_public_address: hardway
+kubernetes_public_address: hardway.com
 cluster_name: hardway
+cluster_domain: hardway.local
 etcd_encryption: true
 encryption_key: KgTD+3zMJDYfbusnNx+VdY3wSVembfu9MDgpJSmezzw= # TODO: Should be a secret
 

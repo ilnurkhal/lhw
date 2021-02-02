@@ -9,7 +9,7 @@ authentication:
     clientCAFile: "{{cert_dir}}/ca.pem"
 authorization:
   mode: Webhook
-clusterDomain: "{{ cluster_name }}"
+clusterDomain: "{{ cluster_domain }}"
 clusterDNS:
   - "{{ cluster_dns }}"
 resolvConf: "/run/systemd/resolve/resolv.conf"
