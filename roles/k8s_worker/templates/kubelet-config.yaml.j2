@@ -11,7 +11,7 @@ authorization:
   mode: Webhook
 clusterDomain: "{{ cluster_name }}"
 clusterDNS:
-  - "10.32.0.10"
+  - "{{ cluster_dns }}"
 resolvConf: "/run/systemd/resolve/resolv.conf"
 runtimeRequestTimeout: "15m"
 tlsCertFile: "{{cert_dir}}/{{ inventory_hostname_short }}.pem"

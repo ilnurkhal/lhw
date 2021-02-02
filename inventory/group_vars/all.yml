@@ -13,8 +13,7 @@ audit_log_max_size: 100
 audit_log_maxbackup: 3
 audit_log_maxage: 30
 
-service_cluster_ip_range: 10.32.0.0/24
-node_port_range: 30000-32767
+
 event_ttl: 1h
 
 enabled_admission_plugins:
@@ -51,7 +50,9 @@ certgen_host: k8sm-1
 
 # Cert hostnames of API
 kubernetes_hostnames: kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.{{cluster_name}},kubernetes.svc.{{cluster_name}}.local
-
+service_cluster_ip_range: 10.32.0.0/24
+node_port_range: 30000-32767
+cluster_dns: 10.32.0.10
 # defaults file for k8s_worker
 kube_proxy_version: 1.20.1
 kubelet_version: 1.20.1
