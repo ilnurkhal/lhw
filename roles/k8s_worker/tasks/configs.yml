@@ -6,7 +6,6 @@
     mode: '0751'
     
 - name: Generate The kubelet Kubernetes Configuration File
-  when: groups['k8s_worker'] is defined and inventory_hostname in groups['k8s_worker']
   shell: "{{ item }}"
   with_items: 
   - kubectl config set-cluster {{ cluster_name }} --certificate-authority={{cert_dir}}/ca.pem --embed-certs=true --server=https://127.0.0.1:6443 --kubeconfig={{ inventory_hostname_short }}.kubeconfig
@@ -15,7 +14,7 @@
   - kubectl config use-context default --kubeconfig={{ inventory_hostname_short }}.kubeconfig     
 
 - name: Generate The kube-proxy Kubernetes Configuration File
-  when: groups['k8s_worker'] is defined and inventory_hostname in groups['k8s_worker']
+  when: use_kube_proxy
   shell: "{{ item }}"
   with_items:
   - kubectl config set-cluster {{ cluster_name }} --certificate-authority={{cert_dir}}/ca.pem --embed-certs=true --server=https://127.0.0.1:6443 --kubeconfig=kube-proxy.kubeconfig
