@@ -2,9 +2,15 @@
 - name: Switch of the swap
   command: "swapoff -a"
 
-- name: Remove swapfile from /etc/fstab
-  mount:
-    name: swap
-    fstype: swap
-    state: absent
+- name: Disable SWAP in fstab since kubernetes can't work with swap enabled (2/2)
+  replace:
+    path: /etc/fstab
+    regexp: '^([^#].*?\sswap\s+sw\s+.*)$'
+    replace: '# \1'
+
+#- name: Remove swapfile from /etc/fstab
+#  mount:
+#    name: swap
+#    fstype: swap
+#    state: absent
 ...
