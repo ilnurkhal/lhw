@@ -15,13 +15,30 @@ service_cluster_ip_range: 10.32.0.0/24
 node_port_range: 30000-32767
 event_ttl: 1h
 
+# https://kubernetes.io/docs/reference/access-authn-authz/admission-controllers
 enabled_admission_plugins:
   - NamespaceLifecycle
-  - NodeRestriction
-  - LimitRanger
+  - LimitRanger 
   - ServiceAccount
+  - TaintNodesByCondition
+  - Priority
+  - DefaultTolerationSeconds
   - DefaultStorageClass
+  - StorageObjectInUseProtection
+  - PersistentVolumeClaimResize
+  - RuntimeClass
+  - CertificateApproval
+  - CertificateSigning
+  - CertificateSubjectRestriction
+  - DefaultIngressClass
+  - MutatingAdmissionWebhook
+  - ValidatingAdmissionWebhook
   - ResourceQuota
+  - NodeRestriction
+  - PodSecurityPolicy 
+
+# https://kubernetes.io/docs/reference/command-line-tools-reference/feature-gates/
+enabled_feature_gates: []
 
 
 kubectl_version: 1.20.0

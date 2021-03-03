@@ -10,6 +10,12 @@ https://{{hostvars[host]['ansible_host']}}:2379{% if not loop.last %},{% endif %
 {%- endfor -%} 
 {%- endmacro -%}
 
+{%- macro feature_gates() -%}
+{%- for feature in enabled_feature_gates -%}
+{{ feature }}=True{% if not loop.last %},{% endif %}
+{%- endfor -%} 
+{%- endmacro -%}
+
 [Unit]
 Description=Kubernetes API Server
 Documentation=https://github.com/kubernetes/kubernetes
@@ -34,6 +40,9 @@ ExecStart=/usr/local/bin/kube-apiserver \
   --event-ttl={{ event_ttl }} \
 {% if etcd_encryption %}
   --encryption-provider-config={{ control_plane_cert_and_context_dir }}/encryption-config.yaml \
+{% endif %}
+{% if enabled_feature_gates %}
+  --feature-gates={{ feature_gates() }} \
 {% endif %}
   --kubelet-certificate-authority={{cert_dir}}/ca.pem \
   --kubelet-client-certificate={{cert_dir}}/kubernetes.pem \

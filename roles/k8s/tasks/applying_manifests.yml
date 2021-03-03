@@ -64,4 +64,238 @@
         - apiGroup: rbac.authorization.k8s.io
           kind: User
           name: kubernetes
+
+- name: ClusterRole for default ServiceAccount
+  run_once: True
+  delegate_to: "{{ groups['k8s_control_plane'][0] }}"
+  environment:
+    K8S_AUTH_KUBECONFIG: ~/.kube/config
+  k8s:
+    kubeconfig: ~/.kube/config
+    state: present
+    definition:
+      apiVersion: rbac.authorization.k8s.io/v1
+      kind: ClusterRole
+      metadata:
+        name: "default:service-accounts"
+      rules:
+      - apiGroups:
+        - policy
+        resourceNames:
+        - common-restricted-psp
+        resources:
+        - podsecuritypolicies
+        verbs:
+        - use
+      - apiGroups:
+        - ""
+        - settings.k8s.io
+        - apps
+        - rbac.authorization.k8s.io
+        - networking.k8s.io
+        - extensions
+        - events.k8s.io  
+        - coordination.k8s.io 
+        - batch 
+        - autoscaling 
+        - authorization.k8s.io
+        - policy
+        resources:
+        - podpresets
+        - configmaps
+        - endpoints
+        - events
+        - persistentvolumeclaims
+        - pods
+        - pods/log
+        - pods/status
+        - pods/portforward
+        - pods/exec
+        - podtemplates
+        - replicationcontrollers
+        - secrets 
+        - services
+        - controllerrevisions
+        - daemonsets
+        - daemonsets/status
+        - deployments
+        - deployments/scale
+        - deployments/status
+        - replicasets
+        - replicasets/scale
+        - replicasets/status
+        - statefulsets
+        - statefulsets/scale
+        - statefulsets/status
+        - localsubjectaccessreviews
+        - horizontalpodautoscalers
+        - cronjobs
+        - cronjobs/status
+        - jobs
+        - jobs/status
+        - certificates
+        - issuers 
+        - leases
+        - ingresses
+        - ingresses/status
+        - networkpolicies
+        - poddisruptionbudgets
+        verbs:
+        - '*'
+      - apiGroups:
+        - ""
+        - rbac.authorization.k8s.io
+        resources:
+        - serviceaccounts
+        - rolebindings
+        - roles
+        - clusterroles
+        - limitranges
+        - resourcequotas
+        verbs:
+        - get
+        - list
+        - watch
+      - apiGroups:
+        - metrics.k8s.io
+        resources:
+        - '*'
+        verbs:
+        - get
+        - list
+        - watch
+
+- name: Common User cluster role binding for default
+  run_once: True
+  delegate_to: "{{ groups['k8s_control_plane'][0] }}"
+  environment:
+    K8S_AUTH_KUBECONFIG: ~/.kube/config
+  k8s:
+    kubeconfig: ~/.kube/config
+    state: present
+    definition:
+      apiVersion: rbac.authorization.k8s.io/v1
+      kind: RoleBinding
+      metadata:
+        name: bind-to-common
+        namespace: default
+      roleRef:
+        apiGroup: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: default:service-accounts
+      subjects:
+      - kind: ServiceAccount
+        name: default
+        namespace: default
+
+- name: Common Restricted PSP
+  run_once: True
+  delegate_to: "{{ groups['k8s_control_plane'][0] }}"
+  environment:
+    K8S_AUTH_KUBECONFIG: ~/.kube/config
+  k8s:
+    kubeconfig: ~/.kube/config
+    state: present
+    definition:
+      apiVersion: policy/v1beta1
+      kind: PodSecurityPolicy
+      metadata:
+        name: common-restricted-psp
+      spec:
+        privileged: false
+        hostIPC: false
+        hostPID: false
+        hostNetwork: false
+        allowPrivilegeEscalation: false
+        readOnlyRootFilesystem: true
+        forbiddenSysctls:
+        - '*'
+        fsGroup:
+          ranges:
+          - max: 65535
+            min: 1
+          rule: MustRunAs
+        requiredDropCapabilities:  # http://man7.org/linux/man-pages/man7/capabilities.7.html
+        - ALL
+        runAsUser:
+          rule: MustRunAsNonRoot
+        runAsGroup:
+          rule: MustRunAs
+          ranges:
+          - min: 1
+            max: 65535
+        seLinux:
+          rule: RunAsAny
+        supplementalGroups:
+          rule: MustRunAs
+          ranges:
+          - min: 1
+            max: 65535
+        volumes:
+        - emptyDir
+        - configMap
+        - secret
+        - downwardAPI
+        - persistentVolumeClaim
+
+- name: Unrestricted PSP
+  run_once: True
+  delegate_to: "{{ groups['k8s_control_plane'][0] }}"
+  environment:
+    K8S_AUTH_KUBECONFIG: ~/.kube/config
+  k8s:
+    kubeconfig: ~/.kube/config
+    state: present
+    definition:
+      apiVersion: policy/v1beta1
+      kind: PodSecurityPolicy
+      metadata:
+        name: unrestricted-psp
+        annotations:
+          seccomp.security.alpha.kubernetes.io/allowedProfileNames: '*'
+      spec:
+        privileged: true
+        allowPrivilegeEscalation: true
+        allowedCapabilities:
+        - '*'
+        volumes:
+        - '*'
+        hostNetwork: true
+        hostPorts:
+        - min: 0
+          max: 65535
+        hostIPC: true
+        hostPID: true
+        runAsUser:
+          rule: 'RunAsAny'
+        seLinux:
+          rule: 'RunAsAny'
+        supplementalGroups:
+          rule: 'RunAsAny'
+        fsGroup:
+          rule: 'RunAsAny'
+
+- name: Unrestricted PSP cluster role
+  run_once: True
+  delegate_to: "{{ groups['k8s_control_plane'][0] }}"
+  environment:
+    K8S_AUTH_KUBECONFIG: ~/.kube/config
+  k8s:
+    kubeconfig: ~/.kube/config
+    state: present
+    definition:
+      apiVersion: rbac.authorization.k8s.io/v1
+      kind: ClusterRole
+      metadata:
+        name: common-psp-clusterrole
+      rules:
+      - apiGroups:
+        - policy
+        resourceNames:
+        - unrestricted-psp
+        resources:
+        - podsecuritypolicies
+        verbs:
+        - use
+
 ...

@@ -1,3 +1,9 @@
+{%- macro feature_gates() -%}
+{%- for feature in enabled_feature_gates -%}
+{{ feature }}=True{% if not loop.last %},{% endif %}
+{%- endfor -%} 
+{%- endmacro -%}
+
 [Unit]
 Description=Kubernetes Kubelet
 Documentation=https://github.com/kubernetes/kubernetes
@@ -10,6 +16,9 @@ ExecStart=/usr/local/bin/kubelet \
   --container-runtime=remote \
   --container-runtime-endpoint=unix:///var/run/containerd/containerd.sock \
   --image-pull-progress-deadline=2m \
+{% if enabled_feature_gates %}
+  --feature-gates={{ feature_gates() }} \
+{% endif %}
   --kubeconfig={{ kubelet_conf_dir }}/kubeconfig \
   --network-plugin=cni \
   --register-node=true \
