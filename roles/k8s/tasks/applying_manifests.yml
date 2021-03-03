@@ -175,18 +175,17 @@
     state: present
     definition:
       apiVersion: rbac.authorization.k8s.io/v1
-      kind: RoleBinding
+      kind: ClusterRoleBinding
       metadata:
-        name: bind-to-common
-        namespace: default
+        name: bind-all-sa-to-common
       roleRef:
         apiGroup: rbac.authorization.k8s.io
         kind: ClusterRole
         name: default:service-accounts
       subjects:
-      - kind: ServiceAccount
-        name: default
-        namespace: default
+      - kind: Group
+        name: system:serviceaccounts
+        apiGroup: rbac.authorization.k8s.io
 
 - name: Common Restricted PSP
   run_once: True
@@ -287,7 +286,7 @@
       apiVersion: rbac.authorization.k8s.io/v1
       kind: ClusterRole
       metadata:
-        name: common-psp-clusterrole
+        name: unrestricted-psp-clusterrole
       rules:
       - apiGroups:
         - policy
@@ -298,4 +297,26 @@
         verbs:
         - use
 
+- name: Unrestricted psp bind for kube-system
+  run_once: True
+  delegate_to: "{{ groups['k8s_control_plane'][0] }}"
+  environment:
+    K8S_AUTH_KUBECONFIG: ~/.kube/config
+  k8s:
+    kubeconfig: ~/.kube/config
+    state: present
+    definition:
+      apiVersion: rbac.authorization.k8s.io/v1
+      kind: RoleBinding
+      metadata:
+        name: bind-to-unrestricted-psp
+        namespace: kube-system
+      roleRef:
+        apiGroup: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: unrestricted-psp-clusterrole
+      subjects:
+      - kind: Group
+        name: system:serviceaccounts
+        apiGroup: rbac.authorization.k8s.io
 ...
